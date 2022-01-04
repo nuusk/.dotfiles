@@ -192,7 +192,14 @@ bar {
 # exec_always setxkbmap ch
 
 # Display Resolution
+# Moved to ~/.bin/i3_startup.sh
+
+# Paterek
 # exec_always xrandr --output DP-1 --mode 1920x1080 --auto
+
+# Nobl9 Office
+# exec_always xrandr --output DP-1 --rotate normal --auto --above eDP-1
+# exec_always xrandr --output DP-2 --rotate right --auto --right-of DP-1
 
 # Display Wallpaper
 exec_always feh --bg-fill ~/Code/backgrounds/princess-mononoke-0.jpg
