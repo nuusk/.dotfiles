@@ -9,13 +9,13 @@ fi
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH="/home/ptak/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load --- if set to "random", it will
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="powerlevel10k/powerlevel10k"
+ZSH_THEME="robbyrussell"
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -77,7 +77,10 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+plugins=(
+	git
+)
+
 
 source $ZSH/oh-my-zsh.sh
 
@@ -106,32 +109,18 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
+source ~/powerlevel10k/powerlevel10k.zsh-theme
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# kubernetes autocompletion
-source <(kubectl completion zsh)
 alias kc=kubectl
-alias d=docker
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$PATH:$HOME/go/bin"
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/home/nuus/google-cloud-sdk/path.zsh.inc' ]; then . '/home/nuus/google-cloud-sdk/path.zsh.inc'; fi
 
-# fedora
-alias lock='dbus-send --type=method_call --dest=org.gnome.ScreenSaver /org/gnome/ScreenSaver org.gnome.ScreenSaver.Lock'
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# The next line enables shell command completion for gcloud.
+if [ -f '/home/nuus/google-cloud-sdk/completion.zsh.inc' ]; then . '/home/nuus/google-cloud-sdk/completion.zsh.inc'; fi
 
-# nvim
-alias nv=nvim
-
-# disable system sleep and hibernation
-alias nosleep="sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target"
-
-# Golang
-export GO111MODULE=on
-# export GOROOT=/usr/local/go
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-
-# n9
-alias n9env='aws eks update-kubeconfig --role-arn arn:aws:iam::$(aws sts get-caller-identity --output text --query "Account" --no-cli-pager):role/k8sAdmin --name'
+export EDITOR="nvim"
