@@ -37,6 +37,9 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
 bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
 
+# Disable title bar
+new_window 1pixel
+
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
 
@@ -48,7 +51,7 @@ tiling_drag modifier titlebar
 bindsym $mod+Return exec alacritty
 
 # kill focused window
-bindsym $mod+Shift+q kill
+bindsym $mod+q kill
 
 # start dmenu (a program launcher)
 # bindsym $mod+d exec --no-startup-id dmenu_run
@@ -191,3 +194,8 @@ exec "setxkbmap -layout pl,us"
 exec "setxkbmap -option 'grp:alt_shift_toggle'"
 
 exec_always feh --bg-tile $HOME/Code/.dotfiles/background/ghibli.png
+exec_always picom --config /home/nuus/.config/picom/picom.conf
+
+gaps inner 10
+# gaps outer 5
+# gaps vertical 15
