@@ -15,6 +15,9 @@ set $mod Mod4
 # is used in the bar {} block below.
 font pango:Source Code Pro 12px
 
+# Auto lock after 15 min inactivity
+exec xautolock -time 15 -locker i3lock
+
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
 exec --no-startup-id dex --autostart --environment i3
@@ -196,6 +199,9 @@ exec "setxkbmap -option 'grp:alt_shift_toggle'"
 exec_always feh --bg-tile $HOME/Code/.dotfiles/background/ghibli.png
 exec_always picom --config /home/nuus/.config/picom/picom.conf
 
-gaps inner 10
+# gaps inner 10
 # gaps outer 5
 # gaps vertical 15
+
+# remove borders
+default_border pixel 0
