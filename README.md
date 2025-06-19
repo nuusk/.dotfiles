@@ -1,8 +1,8 @@
 ## system-configuration
 
-This repository containts the configuration files and profiles for tools that I use.
+This repository contains the configuration files and profiles for tools that I use.
 
-The structure of files within each folder represents the files that should be placed under `$HOME` directory on your system, so for example:
+The structure represents my workstations. For example, in `fi`, you will find all the files corresponding to the configuration files on `fi`. Those files should be placed under $HOME directory on your system, so for example:
 In `i3` folder the structure is as follows:
 ```
 i3
