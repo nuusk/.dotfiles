@@ -1,0 +1,66 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Use a modern, compact prompt
+add_newline = false
+format = """
+[╭─](bold white)$directory$git_branch$git_status$package$nodejs$python$kubernetes
+[╰─](bold white)$character"""
+
+# Prompt symbol
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
+vicmd_symbol = "[❮](blue)"
+
+# Directory style
+[directory]
+style = "cyan bold"
+truncation_length = 3
+truncate_to_repo = false
+
+# Git branch
+[git_branch]
+symbol = " "
+style = "purple"
+
+# Git status
+[git_status]
+style = "red"
+format = '([$all_status$ahead_behind]($style) )'
+
+# Package version (e.g. for npm or cargo)
+[package]
+style = "208 bold"
+
+# Node.js
+[nodejs]
+disabled = true
+format = "via [Node $version](green) "
+
+# Python
+[python]
+format = 'via [Py $version](yellow) '
+detect_extensions = ["py"]
+detect_files = ["pyproject.toml", "requirements.txt", ".python-version"]
+
+# Memory-efficient and quiet
+[cmd_duration]
+disabled = true
+
+[username]
+show_always = false
+
+[hostname]
+ssh_only = true
+style = "bold dimmed white"
+
+[kubernetes]
+disabled = false
+symbol = "⎈"
+style = "yellow"
+format = '[$symbol](bright-black) [$context( \($namespace\))]($style)'
+
+[[kubernetes.contexts]]
+context_pattern = "^prod$"
+context_alias = "prod"
+style = "green"
