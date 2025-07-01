@@ -1,0 +1,30 @@
+{
+  "layer": "top",
+  "position": "top",
+  "modules-left": ["custom.pokeball", "hyprland/workspaces"],
+  "modules-center": ["clock"],
+  "modules-right": ["pulseaudio", "battery", "network"],
+
+  "custom/pokeball": {
+    "format": "⚪",
+    "tooltip": false
+  },
+  "clock": {
+    "format": "{:%a %b %d · %H:%M}",
+    "tooltip-format": "<b>{:%A, %B %d %Y}</b>\n<tt>{:%I:%M:%S %p}</tt>"
+  },
+  "battery": {
+    "format": "🔋 {capacity}%",
+    "format-charging": "⚡ {capacity}%"
+  },
+  "network": {
+    "format-wifi": "📶 {essid}",
+    "format-ethernet": "🖧 {ifname}",
+    "format-disconnected": "❌"
+  },
+  "pulseaudio": {
+    "format": "🔊 {volume}%",
+    "format-muted": "🔇"
+  }
+}
+

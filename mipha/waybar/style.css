@@ -1,0 +1,41 @@
+* {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  border: none;
+  padding: 0 8px;
+}
+
+window#waybar {
+  background-color: #1e1e1e;
+  color: #f8f8f2;
+}
+
+#workspaces button {
+  color: #888;
+  padding: 0 10px;
+}
+
+#workspaces button.focused {
+  color: #f44336; /* Pokéball red */
+  border-bottom: 2px solid #f44336;
+}
+
+#clock,
+#battery,
+#network,
+#pulseaudio,
+#custom-pokeball {
+  background-color: #2a2a2a;
+  margin: 0 4px;
+  border-radius: 6px;
+  color: #f8f8f2;
+}
+
+#battery.charging {
+  color: #00e676;
+}
+
+#custom-pokeball {
+  color: #f44336;
+  font-weight: bold
+}
