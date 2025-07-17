@@ -23,12 +23,25 @@ starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.n
 alias l = eza
 alias t = tmux
 alias k = kubectl
+alias c = /home/nuus/.claude/local/claude
 
 $env.config.buffer_editor = "nvim"
 $env.PATH = ($env.PATH | append '/home/nuus/.cargo/bin')
 $env.PATH = ($env.PATH | append ($env.HOME | path join "go" "bin"))
 $env.PATH = ($env.PATH | append '/home/nuus/.local/share/../bin')
+$env.PATH = ($env.PATH | append '/home/nuus/.npm-global/bin')
 
 # Carapace - Autocompletion
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
 source ~/.cache/carapace/init.nu
+
+# Anthropic - needed by code companion in nvim
+# $env.ANTHROPIC_KEY = (
+#   ^gpg --quiet --decrypt ~/.secrets/anth_key.gpg
+#   | str trim
+# )
+
+
+# Gemini CLI setup
+$env.GOOGLE_CLOUD_PROJECT = 'atreides-465401'
+
