@@ -4,7 +4,10 @@ return {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
     "antoinemadec/FixCursorHold.nvim",
-    "nvim-neotest/neotest-go", -- or your language adapter
+    "nvim-neotest/neotest-go",
+    "mfussenegger/nvim-dap",
+    "leoluz/nvim-dap-go",
+    "rcarriga/nvim-dap-ui",
   },
   keys = {
     {
@@ -56,12 +59,75 @@ return {
       end,
       desc = "Stop",
     },
+    {
+      "<leader>dd",
+      function()
+        require("dap").continue()
+      end,
+      desc = "Start Debugging",
+    },
+    {
+      "<leader>db",
+      function()
+        require("dap").toggle_breakpoint()
+      end,
+      desc = "Toggle Breakpoint",
+    },
+    {
+      "<leader>do",
+      function()
+        require("dap").step_over()
+      end,
+      desc = "Step Over",
+    },
+    {
+      "<leader>di",
+      function()
+        require("dap").step_into()
+      end,
+      desc = "Step Into",
+    },
+    {
+      "<leader>du",
+      function()
+        require("dap").step_out()
+      end,
+      desc = "Step Out",
+    },
+    {
+      "<leader>dr",
+      function()
+        require("dap").repl.open()
+      end,
+      desc = "Open REPL",
+    },
+    {
+      "<leader>dt",
+      function()
+        require("dap-go").debug_test()
+      end,
+      desc = "Debug Nearest Go Test",
+    },
   },
   config = function()
     require("neotest").setup({
       adapters = {
-        require("neotest-go"), -- use your desired adapter here
+        require("neotest-go"),
       },
     })
+
+    require("dap-go").setup()
+
+    local dap, dapui = require("dap"), require("dapui")
+    dapui.setup()
+    dap.listeners.after.event_initialized["dapui_config"] = function()
+      dapui.open()
+    end
+    dap.listeners.before.event_terminated["dapui_config"] = function()
+      dapui.close()
+    end
+    dap.listeners.before.event_exited["dapui_config"] = function()
+      dapui.close()
+    end
   end,
 }
