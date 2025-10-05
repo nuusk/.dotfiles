@@ -2,5 +2,14 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
-vim.keymap.set({ "n", "v" }, "<leader>y", '"+y', { desc = "Yank to system clipboard" })
-vim.keymap.set({ "n", "v" }, "<leader>p", '"+p', { desc = "Paste from system clipboard" })
+vim.keymap.set("n", "<leader>uh", function()
+  local enabled = vim.lsp.inlay_hint.is_enabled()
+  vim.lsp.inlay_hint.enable(not enabled)
+  print("Inlay hints " .. (enabled and "disabled" or "enabled"))
+end, { desc = "Toggle Inlay Hints" })
+
+vim.keymap.set("n", "<leader>ff", function()
+  local path = vim.fn.expand("%:p")
+  print(path)
+  vim.fn.setreg("+", path)
+end, { desc = "Print current file path" })
