@@ -1,0 +1,36 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# alias ls='ls --color=auto'
+alias ls=eza
+alias bat=cat
+alias grep='grep --color=auto'
+PS1='[\u@\h \W]\$ '
+eval "$(starship init bash)"
+
+export PATH=$PATH:$(go env GOPATH)/bin
+
+# Completion
+[ -f /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion
+
+# History
+HISTSIZE=100000
+HISTFILESIZE=200000
+HISTCONTROL=ignoredups:erasedups
+HISTTIMEFORMAT='%F %T '
+shopt -s histappend
+PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
+
+# fzf integration
+[ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
+[ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
+
+# GO
+export GOEXPERIMENT=synctest
+
+# Git
+export EDITOR=nvim
