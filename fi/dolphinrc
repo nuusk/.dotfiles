@@ -1,0 +1,23 @@
+MenuBar=Disabled
+
+[DetailsMode]
+PreviewSize=16
+
+[ExtractDialog]
+2991x1252 screen: Height=626
+2991x1252 screen: Width=1869
+DirHistory[$e]=$HOME/Pobrane/
+
+[General]
+Version=202
+ViewPropsTimestamp=2025,5,25,22,35,4.823
+
+[IconsMode]
+PreviewSize=80
+
+[KFileDialog Settings]
+Places Icons Auto-resize=false
+Places Icons Static Size=22
+
+[MainWindow]
+MenuBar=Disabled
