@@ -1,0 +1,103 @@
+:root {
+    --gs-bg: #0a0e17;
+    --gs-bg-muted: #1a2332;
+    --gs-fg: #80ffcc;
+    --gs-dim: #5ea488;
+    --gs-primary: #00ff80;
+    --gs-accent: #00e5ff;
+    --gs-border: #0d3326;
+    --gs-primary-soft: rgba(0, 255, 128, 0.08);
+}
+
+#navigator-toolbox,
+#TabsToolbar,
+#nav-bar,
+#PersonalToolbar,
+#sidebar-header,
+#sidebar-box,
+#titlebar,
+#tabbrowser-tabbox {
+    background: var(--gs-bg) !important;
+    color: var(--gs-fg) !important;
+}
+
+#nav-bar {
+    border-top: 1px solid var(--gs-border) !important;
+    border-bottom: 1px solid var(--gs-border) !important;
+}
+
+.tabbrowser-tab {
+    padding-inline: 0 !important;
+}
+
+.tab-background {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+}
+
+.tabbrowser-tab[selected] .tab-background,
+.tab-background[selected] {
+    background: var(--gs-primary-soft) !important;
+}
+
+.tab-label {
+    color: var(--gs-dim) !important;
+    font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", monospace !important;
+    font-size: 11px !important;
+}
+
+.tabbrowser-tab[selected] .tab-label,
+.tab-background[selected] .tab-label {
+    color: var(--gs-primary) !important;
+    font-weight: 700 !important;
+}
+
+#tabs-newtab-button,
+#new-tab-button,
+#alltabs-button,
+.tab-close-button,
+toolbar .toolbarbutton-1,
+#PanelUI-menu-button,
+#nav-bar-overflow-button,
+#firefox-view-button,
+#unified-extensions-button {
+    color: var(--gs-dim) !important;
+}
+
+#urlbar-background,
+#searchbar {
+    background: var(--gs-bg-muted) !important;
+    border: 1px solid var(--gs-border) !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+}
+
+#urlbar[open] #urlbar-background,
+#urlbar[focused] #urlbar-background,
+#searchbar:focus-within {
+    border-color: var(--gs-primary) !important;
+}
+
+#urlbar-input,
+#searchbar,
+#searchbar .searchbar-textbox {
+    color: var(--gs-fg) !important;
+    font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", monospace !important;
+    font-size: 11px !important;
+}
+
+toolbarbutton.bookmark-item .toolbarbutton-text,
+#PersonalToolbar toolbarbutton {
+    color: var(--gs-dim) !important;
+    font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", monospace !important;
+    font-size: 10px !important;
+}
+
+#sidebar-header,
+#sidebar-box,
+#sidebar {
+    border-inline-end: 1px solid var(--gs-border) !important;
+}

@@ -1,0 +1,134 @@
+{
+    "layer": "top",
+    "position": "top",
+    "height": 32,
+    "spacing": 6,
+    "margin-top": 5,
+    "margin-left": 10,
+    "margin-right": 10,
+
+    "modules-left": ["custom/logo", "hyprland/workspaces", "custom/special-workspace", "hyprland/window"],
+    "modules-center": [],
+    "modules-right": ["battery", "cpu", "memory", "network", "wireplumber", "bluetooth", "hyprland/language", "idle_inhibitor", "custom/dunst", "custom/recording", "clock", "tray"],
+
+    "custom/logo": {
+        "format": "[MIPHA]",
+        "tooltip": false
+    },
+
+    "hyprland/workspaces": {
+        "format": "{id}",
+        "on-click": "activate",
+        "sort-by-number": true,
+        "persistent-workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": []
+        }
+    },
+
+    "custom/special-workspace": {
+        "format": "{}",
+        "exec": "/home/nuus/.config/waybar/special_workspace.sh",
+        "return-type": "json",
+        "tooltip": true
+    },
+
+    "hyprland/window": {
+        "format": "{}",
+        "icon": true,
+        "icon-size": 18,
+        "max-length": 40,
+        "separate-outputs": true
+    },
+
+    "custom/dunst": {
+        "format": "{}",
+        "exec": "dunst_toggle",
+        "return-type": "json",
+        "interval": 5,
+        "on-click": "dunst_toggle toggle",
+        "exec-on-event": true
+    },
+
+    "custom/recording": {
+        "format": "{}",
+        "exec": "/home/nuus/.config/waybar/recording_status.sh",
+        "return-type": "json",
+        "interval": 1,
+        "tooltip": true
+    },
+
+    "clock": {
+        "format": "{:%H:%M}",
+        "tooltip-format": "{:%A, %B %d %Y}"
+    },
+
+    "cpu": {
+        "format": "<span color='#5ea488'>CPU</span> <b>{usage}%</b>",
+        "interval": 2
+    },
+
+    "memory": {
+        "interval": 5,
+        "format": "<span color='#5ea488'>MEM</span> <b>{used:0.1f}G</b>"
+    },
+
+    "wireplumber": {
+        "format": "<span color='#5ea488'>VOL</span> {volume}%",
+        "format-muted": "<span color='#5ea488'>VOL</span> MUTE",
+        "max-volume": 100,
+        "scroll-step": 5,
+        "on-click": "pavucontrol"
+    },
+
+    "battery": {
+        "bat": "BAT0",
+        "interval": 30,
+        "format": "<span color='#5ea488'>BAT</span> {capacity}%",
+        "format-charging": "<span color='#00ff80'>BAT+</span> {capacity}%",
+        "format-plugged": "<span color='#5ea488'>BAT</span> AC",
+        "states": {
+            "warning": 25,
+            "critical": 10
+        }
+    },
+
+    "network": {
+        "format-wifi": "<span color='#5ea488'>NET</span> ↑{bandwidthUpBits} ↓{bandwidthDownBits}",
+        "format-ethernet": "<span color='#5ea488'>NET</span> ↑{bandwidthUpBits} ↓{bandwidthDownBits}",
+        "format-disconnected": "<span color='#5ea488'>NET</span> --",
+        "interval": 2,
+        "tooltip-format-wifi": "{essid} ({signalStrength}%)",
+        "tooltip-format-ethernet": "{ifname}",
+        "tooltip-format-disconnected": "Disconnected"
+    },
+
+    "bluetooth": {
+        "format": "<span color='#5ea488'>BT</span>",
+        "format-disabled": "<span color='#5ea488'>BT</span> OFF",
+        "format-connected": "<span color='#5ea488'>BT</span> ON",
+        "tooltip-format": "{controller_alias}\t{controller_address}",
+        "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
+    },
+
+    "hyprland/language": {
+        "format": "<span color='#5ea488'>KB</span> {short}"
+    },
+
+    "tray": {
+        "icon-size": 14,
+        "spacing": 10
+    },
+
+    "idle_inhibitor": {
+        "format": "<span color='#5ea488'>IDLE</span> {icon}",
+        "format-icons": {
+            "activated": "ON",
+            "deactivated": "OFF"
+        }
+    }
+}

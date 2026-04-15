@@ -2,6 +2,19 @@
 
 This repository contains the configuration files and profiles for tools that I use.
 
+It also contains reusable theme bundles.
+
+- `green_static/`
+  A portable Hyprland-centered theme/profile bundle with its own `README.md`, `INSTALLATION.md`, and `AGENTS.md`.
+  Apply it from inside that directory with:
+
+  ```bash
+  cd ~/code/.dotfiles/green_static
+  ./apply.sh
+  ```
+
+  See `green_static/INSTALLATION.md` for prerequisites and post-apply steps.
+
 The structure represents my workstations. For example, in `fi`, you will find all the files corresponding to the configuration files on `fi`. Those files should be placed under $HOME directory on your system, so for example:
 In `i3` folder the structure is as follows:
 ```
