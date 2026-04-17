@@ -52,6 +52,11 @@ return {
       opts.on_highlights = function(hl, colors)
         hl.Normal = { bg = palette.bg, fg = palette.fg }
         hl.NormalNC = { bg = palette.bg, fg = palette.fg }
+        hl.NormalSB = { bg = palette.bg, fg = palette.fg }
+        hl.SignColumn = { bg = palette.bg, fg = palette.fg_dim }
+        hl.SignColumnSB = { bg = palette.bg, fg = palette.fg_dim }
+        hl.FoldColumn = { bg = palette.bg, fg = palette.fg_dim }
+        hl.EndOfBuffer = { bg = palette.bg, fg = palette.bg }
         hl.NormalFloat = { bg = palette.bg_card, fg = palette.fg }
         hl.FloatBorder = { bg = palette.bg_card, fg = palette.accent }
         hl.FloatTitle = { bg = palette.bg_card, fg = palette.primary, bold = true }
@@ -80,6 +85,21 @@ return {
         hl.DiagnosticWarn = { fg = palette.yellow }
         hl.DiagnosticInfo = { fg = palette.accent }
         hl.DiagnosticHint = { fg = palette.primary }
+        hl.NeoTreeNormal = { bg = palette.bg, fg = palette.fg }
+        hl.NeoTreeNormalNC = { bg = palette.bg, fg = palette.fg }
+        hl.NeoTreeSignColumn = { bg = palette.bg, fg = palette.fg_dim }
+        hl.NeoTreeSignColumnNC = { bg = palette.bg, fg = palette.fg_dim }
+        hl.NeoTreeStatusLine = { bg = palette.bg, fg = palette.fg }
+        hl.NeoTreeStatusLineNC = { bg = palette.bg, fg = palette.fg_dim }
+        hl.NeoTreeEndOfBuffer = { bg = palette.bg, fg = palette.bg }
+        hl.NeoTreeWinSeparator = { bg = palette.bg, fg = palette.border }
+        hl.NeoTreeCursorLine = { bg = palette.bg }
+        hl.NeoTreeCursorLineNr = { bg = palette.bg, fg = palette.primary, bold = true }
+        hl.NvimTreeNormal = { bg = palette.bg, fg = palette.fg }
+        hl.NvimTreeNormalNC = { bg = palette.bg, fg = palette.fg }
+        hl.NvimTreeEndOfBuffer = { bg = palette.bg, fg = palette.bg }
+        hl.SnacksNormal = { bg = palette.bg, fg = palette.fg }
+        hl.SnacksNormalNC = { bg = palette.bg, fg = palette.fg }
         hl.TelescopeNormal = { bg = palette.bg_card, fg = palette.fg }
         hl.TelescopeBorder = { bg = palette.bg_card, fg = palette.border }
         hl.TelescopePromptNormal = { bg = palette.bg_muted, fg = palette.fg }

@@ -9,7 +9,7 @@
 
     "modules-left": ["custom/logo", "hyprland/workspaces", "custom/special-workspace", "hyprland/window"],
     "modules-center": [],
-    "modules-right": ["battery", "cpu", "memory", "network", "wireplumber", "bluetooth", "hyprland/language", "idle_inhibitor", "custom/dunst", "custom/recording", "clock", "tray"],
+    "modules-right": ["battery", "cpu", "memory", "network", "wireplumber", "bluetooth", "hyprland/language", "idle_inhibitor", "custom/dunst", "custom/mic-mute", "custom/recording", "clock", "tray"],
 
     "custom/logo": {
         "format": "[MIPHA]",
@@ -20,13 +20,7 @@
         "format": "{id}",
         "on-click": "activate",
         "sort-by-number": true,
-        "persistent-workspaces": {
-            "1": [],
-            "2": [],
-            "3": [],
-            "4": [],
-            "5": []
-        }
+        "all-outputs": false
     },
 
     "custom/special-workspace": {
@@ -56,6 +50,14 @@
     "custom/recording": {
         "format": "{}",
         "exec": "/home/nuus/.config/waybar/recording_status.sh",
+        "return-type": "json",
+        "interval": 1,
+        "tooltip": true
+    },
+
+    "custom/mic-mute": {
+        "format": "{}",
+        "exec": "/home/nuus/.config/waybar/mic_status.sh",
         "return-type": "json",
         "interval": 1,
         "tooltip": true

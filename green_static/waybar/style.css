@@ -41,6 +41,7 @@ window#waybar {
 #language,
 #idle_inhibitor,
 #custom-dunst,
+#custom-mic-mute,
 #custom-recording,
 #clock,
 #tray {
@@ -131,6 +132,20 @@ window#waybar {
     color: @red;
     background: rgba(255, 69, 58, 0.10);
     font-weight: 700;
+}
+
+#custom-mic-mute.muted {
+    color: @red;
+    background: rgba(255, 69, 58, 0.10);
+    font-weight: 700;
+}
+
+#custom-mic-mute.hidden {
+    background: transparent;
+    color: transparent;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
 }
 
 #custom-recording.hidden {

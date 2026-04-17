@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-wallpaper="/home/nuus/.config/hypr/wallpaper.jpg"
+state_dir="${XDG_RUNTIME_DIR:-/tmp}/green_static"
+state_file="$state_dir/current_wallpaper.path"
+collection_dir="$HOME/code/backgrounds/cycling/ff7"
+fallback_wallpaper="$HOME/.config/hypr/wallpaper.jpg"
+
+mkdir -p "$state_dir"
+
+collect_first_wallpaper() {
+  find "$collection_dir" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | sort | head -n1
+}
 
 pkill hyprpaper >/dev/null 2>&1 || true
 
@@ -17,7 +26,18 @@ for _ in {1..30}; do
   sleep 0.1
 done
 
-awww img "$wallpaper" \
-  --transition-type none \
-  --resize crop \
-  --filter Lanczos3
+wallpaper=""
+if [ -f "$state_file" ]; then
+  wallpaper=$(<"$state_file")
+fi
+
+if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
+  wallpaper="$(collect_first_wallpaper)"
+fi
+
+if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
+  wallpaper="$fallback_wallpaper"
+fi
+
+printf '%s\n' "$wallpaper" > "$state_file"
+"$HOME/.config/hypr/awww_set_wallpaper.sh" "$wallpaper"

@@ -15,6 +15,7 @@ print_state() {
   case "$short" in
     slack) label="S" ;;
     obsidian) label="O" ;;
+    onepassword) label="P" ;;
     signal) label="Z" ;;
     *)
       label=$(printf '%s' "$short" | tr '[:lower:]' '[:upper:]' | tr -cd 'A-Z0-9' | cut -c1)
