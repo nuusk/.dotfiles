@@ -1,104 +1,136 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 24,
-    "spacing": 5,
+    "height": 32,
+    "spacing": 6,
+    "margin-top": 5,
+    "margin-left": 10,
+    "margin-right": 10,
 
-    "modules-left": ["hyprland/workspaces", "custom/platform-profile"],
-    "modules-center": ["clock"],
-    "modules-right": ["wireplumber", "battery", "hyprland/language", "idle_inhibitor", "network", "bluetooth", "tray"],
+    "modules-left": ["custom/logo", "hyprland/workspaces", "custom/special-workspace", "hyprland/window"],
+    "modules-center": [],
+    "modules-right": ["battery", "cpu", "memory", "network", "wireplumber", "bluetooth", "hyprland/language", "idle_inhibitor", "custom/dunst", "custom/mic-mute", "custom/recording", "clock", "tray"],
+
+    "custom/logo": {
+        "format": "[MIPHA]",
+        "tooltip": false
+    },
 
     "hyprland/workspaces": {
-        "format": "<span size='larger'>{icon}</span>",
+        "format": "{id}",
         "on-click": "activate",
-        "format-icons": {
-            "active": "\uf444",
-            "default": "\uf4c3"
-        },
-        "icon-size": 10,
         "sort-by-number": true,
-        "...persistent-workspaces": {
-            "1": [],
-            "2": [],
-            "3": [],
-            "4": [],
-            "5": [],
-        }
+        "all-outputs": false
+    },
+
+    "custom/special-workspace": {
+        "format": "{}",
+        "exec": "/home/nuus/.config/waybar/special_workspace.sh",
+        "return-type": "json",
+        "tooltip": true
+    },
+
+    "hyprland/window": {
+        "format": "{}",
+        "icon": true,
+        "icon-size": 18,
+        "max-length": 40,
+        "separate-outputs": true
+    },
+
+    "custom/dunst": {
+        "format": "{}",
+        "exec": "dunst_toggle",
+        "return-type": "json",
+        "interval": 5,
+        "on-click": "dunst_toggle toggle",
+        "exec-on-event": true
+    },
+
+    "custom/recording": {
+        "format": "{}",
+        "exec": "/home/nuus/.config/waybar/recording_status.sh",
+        "return-type": "json",
+        "interval": 1,
+        "tooltip": true
+    },
+
+    "custom/mic-mute": {
+        "format": "{}",
+        "exec": "/home/nuus/.config/waybar/mic_status.sh",
+        "return-type": "json",
+        "interval": 1,
+        "tooltip": true
     },
 
     "clock": {
-        "format": "{:%d.%m.%Y | %H:%M}"
+        "format": "{:%H:%M}",
+        "tooltip-format": "{:%A, %B %d %Y}"
     },
 
-    "wireplumber": {
-        "format": "\udb81\udd7e  {volume}%",
-        "max-volume": 100,
-        "scroll-step": 5
-    },
-
-    "battery": {
-        "bat": "BAT1",
-        "interval": 60,
-        "format": "{icon}  {capacity}%",
-        "format-icons": ["\uf244", "\uf243", "\uf242", "\uf241", "\uf240"],
+    "cpu": {
+        "format": "<span color='#5ea488'>CPU</span> <b>{usage}%</b>",
+        "interval": 2
     },
 
     "memory": {
-        "interval": 30,
-        "format": "\uf4bc  {used:0.1f}G"
+        "interval": 5,
+        "format": "<span color='#5ea488'>MEM</span> <b>{used:0.1f}G</b>"
     },
 
-    "temperature": {
-        "format": "{temperatureC}°C"
+    "wireplumber": {
+        "format": "<span color='#5ea488'>VOL</span> {volume}%",
+        "format-muted": "<span color='#5ea488'>VOL</span> MUTE",
+        "max-volume": 100,
+        "scroll-step": 5,
+        "on-click": "pavucontrol"
+    },
+
+    "battery": {
+        "bat": "BAT0",
+        "interval": 30,
+        "format": "<span color='#5ea488'>BAT</span> {capacity}%",
+        "format-charging": "<span color='#00ff80'>BAT+</span> {capacity}%",
+        "format-plugged": "<span color='#5ea488'>BAT</span> AC",
+        "states": {
+            "warning": 25,
+            "critical": 10
+        }
     },
 
     "network": {
-        "format": "",
-        "format-ethernet": "\udb83\udc9d",
-        "format-wifi": "{icon}",
-        "format-disconnected": "\udb83\udc9c",
-        "format-icons": ["\udb82\udd2f", "\udb82\udd1f", "\udb82\udd22", "\udb82\udd25", "\udb82\udd28"],
+        "format-wifi": "<span color='#5ea488'>NET</span> ↑{bandwidthUpBits} ↓{bandwidthDownBits}",
+        "format-ethernet": "<span color='#5ea488'>NET</span> ↑{bandwidthUpBits} ↓{bandwidthDownBits}",
+        "format-disconnected": "<span color='#5ea488'>NET</span> --",
+        "interval": 2,
         "tooltip-format-wifi": "{essid} ({signalStrength}%)",
         "tooltip-format-ethernet": "{ifname}",
-        "tooltip-format-disconnected": "Disconnected",
+        "tooltip-format-disconnected": "Disconnected"
     },
 
     "bluetooth": {
-        "format": "\udb80\udcaf",
-        "format-disabled": "\udb80\udcb2",
-        "format-connected": "\udb80\udcb1",
+        "format": "<span color='#5ea488'>BT</span>",
+        "format-disabled": "<span color='#5ea488'>BT</span> OFF",
+        "format-connected": "<span color='#5ea488'>BT</span> ON",
         "tooltip-format": "{controller_alias}\t{controller_address}",
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
     },
 
     "hyprland/language": {
-        "format": "{short}"
+        "format": "<span color='#5ea488'>KB</span> {short}"
     },
 
     "tray": {
-        "icon-size": 16,
-        "spacing": 16
-    },
-
-    "custom/platform-profile": {
-	"format": "{icon} ",
-	"exec": "~/.config/waybar/platform_profile.sh",
-	"return-type": "json",
-	"restart-interval": 1,
-	"format-icons": {
-	    "quiet": "\udb80\udf2a",
-	    "balanced": "\udb80\ude10",
-	    "performance": "\uf427",
-            "default": "?"
-	},
+        "icon-size": 14,
+        "spacing": 10
     },
 
     "idle_inhibitor": {
-        "format": "{icon}",
+        "format": "<span color='#5ea488'>IDLE</span> {icon}",
         "format-icons": {
-            "activated": "\udb80\udd76",
-            "deactivated": "\udb83\udfaa"
+            "activated": "ON",
+            "deactivated": "OFF"
         }
     }
 }

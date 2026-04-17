@@ -1,0 +1,39 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "teferi-hero-of-dominaria",
+  "agent": {
+    "build": {
+      "disable": true
+    },
+    "plan": {
+      "disable": true
+    }
+  },
+  "mcp": {
+    "atlassian": {
+      "type": "remote",
+      "url": "https://mcp.atlassian.com/v1/mcp",
+      "enabled": true
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true,
+      "headers": {
+        "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+      }
+    },
+    "groundcover": {
+      "type": "remote",
+      "url": "https://mcp.groundcover.com/api/mcp",
+      "enabled": false,
+      "oauth": false,
+      "headers": {
+        "X-Timezone": "{env:GROUNDCOVER_TIMEZONE}",
+        "X-Tenant-UUID": "{env:GROUNDCOVER_TENANT_UUID}",
+        "X-Backend-Id": "{env:GROUNDCOVER_BACKEND_ID}",
+        "Authorization": "{env:GROUNDCOVER_AUTH_HEADER}"
+      }
+    }
+  }
+}

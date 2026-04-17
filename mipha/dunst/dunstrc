@@ -1,0 +1,55 @@
+[global]
+    monitor = 0
+    follow = mouse
+    width = 340
+    height = 120
+    origin = top-right
+    offset = 40x40
+    notification_limit = 4
+    progress_bar = false
+    indicate_hidden = yes
+    transparency = 0
+    separator_height = 0
+    padding = 10
+    horizontal_padding = 12
+    text_icon_padding = 10
+    frame_width = 1
+    gap_size = 4
+    separator_color = frame
+    sort = yes
+    font = BlexMono Nerd Font Mono 11
+    line_height = 2
+    markup = full
+    format = "<span foreground='#00ff80'><b>%s</b></span>\n<span foreground='#80ffcc'>%b</span>"
+    alignment = left
+    vertical_alignment = center
+    show_age_threshold = 30
+    ellipsize = end
+    icon_position = left
+    min_icon_size = 32
+    max_icon_size = 64
+    corner_radius = 2
+    mouse_left_click = close_current
+    mouse_middle_click = do_action
+    mouse_right_click = close_all
+
+[urgency_low]
+    background = "#0a0e17"
+    foreground = "#5ea488"
+    frame_color = "#0d3326"
+    highlight = "#00ff80"
+    timeout = 4
+
+[urgency_normal]
+    background = "#0a0e17"
+    foreground = "#80ffcc"
+    frame_color = "#00ff8038"
+    highlight = "#00ff80"
+    timeout = 7
+
+[urgency_critical]
+    background = "#0a0e17"
+    foreground = "#b3ffdd"
+    frame_color = "#ff453a80"
+    highlight = "#ff453a"
+    timeout = 0

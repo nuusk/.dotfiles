@@ -1,0 +1,40 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# alias ls='ls --color=auto'
+alias ls=eza
+alias bat=cat
+alias grep='grep --color=auto'
+alias k=kubectl
+complete -o default -F __start_kubectl k
+PS1='[\u@\h \W]\$ '
+eval "$(starship init bash)"
+
+# Completion
+[ -f /usr/share/bash-completion/bash_completion ] && . /usr/share/bash-completion/bash_completion
+
+# History
+HISTSIZE=100000
+HISTFILESIZE=200000
+HISTCONTROL=ignoredups:erasedups
+HISTTIMEFORMAT='%F %T '
+shopt -s histappend
+PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
+
+# fzf integration
+[ -f /usr/share/fzf/key-bindings.bash ] && . /usr/share/fzf/key-bindings.bash
+[ -f /usr/share/fzf/completion.bash ] && . /usr/share/fzf/completion.bash
+
+# Git
+export EDITOR=nvim
+
+# Secrets
+[ -f "$HOME/.secrets/env" ] && source "$HOME/.secrets/env"
+
+# peon-ping quick controls
+alias peon="bash /home/nuus/.claude/hooks/peon-ping/peon.sh"
+[ -f /home/nuus/.claude/hooks/peon-ping/completions.bash ] && source /home/nuus/.claude/hooks/peon-ping/completions.bash

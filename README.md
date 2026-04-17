@@ -16,6 +16,17 @@ It also contains reusable theme bundles.
   See `green_static/INSTALLATION.md` for prerequisites and post-apply steps.
 
 The structure represents my workstations. For example, in `fi`, you will find all the files corresponding to the configuration files on `fi`. Those files should be placed under $HOME directory on your system, so for example:
+
+For `mipha`, there is also a repo-safe OpenCode snapshot at:
+
+- `mipha/opencode/`
+
+See:
+
+- `mipha/opencode/README.md`
+
+for the manual setup steps needed to make it work, including API keys, MCP auth, and peon-ping pack configuration.
+
 In `i3` folder the structure is as follows:
 ```
 i3
