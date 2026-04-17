@@ -6,9 +6,6 @@ on:
 jobs:
   privacy-scan:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
 
     steps:
       - name: Checkout repository
@@ -17,65 +14,42 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Reset prior report
-        run: rm -f .opencode/reports/privacy-scan.md
+      - name: Ensure scanner is executable
+        run: chmod +x scripts/privacy_scan_local.sh
 
-      - name: Run OpenCode privacy scan
-        uses: anomalyco/opencode/github@latest
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OC_PUSH_BASE: ${{ github.event.before }}
-          OC_PUSH_HEAD: ${{ github.sha }}
-        with:
-          model: openai/gpt-5
-          agent: davriel-rogue-shadowmage
-          prompt: |
-            Scan the changes introduced by this push for secrets, personal details, and accidental private disclosures.
+      - name: Run push privacy scan
+        id: scan
+        run: |
+          report="$(mktemp)"
+          trap 'rm -f "$report"' EXIT
 
-            Requirements:
-            - Prefer the pushed diff using OC_PUSH_BASE and OC_PUSH_HEAD.
-            - If OC_PUSH_BASE is invalid or all zeros, scan the repository.
-            - Write the final result to .opencode/reports/privacy-scan.md.
-            - If no findings exist, write exactly NO_FINDINGS.
-            - Do not modify any other files.
+          before="${{ github.event.before }}"
+          after="${{ github.sha }}"
+          empty_tree="$(git hash-object -t tree /dev/null)"
 
-      - name: Publish report to workflow summary
+          if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ]; then
+            git diff --no-color --unified=0 "$empty_tree" "$after" | scripts/privacy_scan_local.sh >"$report" 2>&1
+          else
+            git diff --no-color --unified=0 "$before" "$after" | scripts/privacy_scan_local.sh >"$report" 2>&1
+          fi
+
+      - name: Publish result to workflow summary
         if: always()
         run: |
-          if [ -f .opencode/reports/privacy-scan.md ]; then
-            if grep -qx 'NO_FINDINGS' .opencode/reports/privacy-scan.md; then
-              {
-                echo "## OpenCode Privacy Scan"
-                echo
-                echo "No findings detected."
-              } >> "$GITHUB_STEP_SUMMARY"
-            else
-              {
-                echo "## OpenCode Privacy Scan"
-                echo
-                echo "Suspicious content was detected. Review the workflow privately and investigate locally."
-              } >> "$GITHUB_STEP_SUMMARY"
-            fi
-          else
-            {
-              echo "## OpenCode Privacy Scan"
-              echo
-              echo "No report file was produced."
-            } >> "$GITHUB_STEP_SUMMARY"
-          fi
+          {
+            echo "## Push Privacy Scan"
+            echo
+            echo "This workflow uses the repo-local scanner from scripts/privacy_scan_local.sh."
+            echo
+            echo "If the job failed, suspicious content was detected in the pushed diff. Review locally."
+          } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Fail on findings
+      - name: Pass
+        run: echo "No suspicious content detected"
+        if: success()
+
+      - name: Fail with minimal output
+        if: failure()
         run: |
-          report=".opencode/reports/privacy-scan.md"
-          if [ ! -f "$report" ]; then
-            echo "Privacy scan report missing"
-            exit 1
-          fi
-
-          if grep -qx 'NO_FINDINGS' "$report"; then
-            echo "No findings detected"
-            exit 0
-          fi
-
-          echo "Privacy/secret findings detected"
+          echo "Privacy/secret findings detected in pushed diff. Review locally using the pre-push scanner."
           exit 1

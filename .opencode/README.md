@@ -15,24 +15,28 @@ The repo includes a workflow at:
 
 - `.github/workflows/opencode-push-privacy-scan.yml`
 
-It runs on every push and asks OpenCode to scan the pushed changes for:
+It runs on every push and scans the pushed changes for:
 
 - secrets
 - personal details
 - hardcoded tokens / auth headers
 - accidental machine-specific/private identifiers
 
+Note:
+
+- the OpenCode GitHub Action does not support the raw `push` event directly
+- so the push workflow uses the repo-local shell scanner from `scripts/privacy_scan_local.sh`
+- the Davriel agent remains in `.opencode/agents/` for future OpenCode-supported GitHub triggers or repo-local usage
+
 ## Manual Setup Required
 
-Add this GitHub Actions secret in the repository settings:
+No GitHub Actions secret is required for the push workflow.
 
-- `OPENAI_API_KEY`
+If you later add an OpenCode-supported GitHub workflow (for example `workflow_dispatch`, `schedule`, PR review comments, or issue comments), you can reuse:
 
-The workflow uses:
-
-- `anomalyco/opencode/github@latest`
 - the repo-local primary agent `davriel-rogue-shadowmage`
 - `openai/gpt-5`
+- an `OPENAI_API_KEY` repository secret
 
 ## Local Pre-Push Protection
 
@@ -52,9 +56,9 @@ This local hook scans only the to-be-pushed diff and blocks the push before anyt
 
 ## Behavior
 
-- The workflow writes findings to `.opencode/reports/privacy-scan.md` inside the runner workspace.
-- If no findings exist, the agent writes exactly `NO_FINDINGS`.
-- If findings exist, the workflow fails the run and shows only a minimal summary message.
+- The push workflow runs `scripts/privacy_scan_local.sh` against the pushed diff in CI.
+- If suspicious content is detected, the workflow fails.
+- The workflow summary stays intentionally minimal.
 
 This is intentional so detailed findings are not dumped into public workflow summaries.
 
