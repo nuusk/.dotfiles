@@ -52,9 +52,7 @@ if [ -f "$state_file" ]; then
 fi
 
 next="$(pick_wallpaper "$current" "$direction")" || {
-  notify-send "Wallpaper cycle failed" "No wallpapers found in $collection_dir"
   exit 1
 }
 
 "$setter" "$next" >/dev/null 2>&1
-notify-send "Wallpaper changed" "$(basename "$next")"

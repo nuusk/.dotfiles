@@ -14,14 +14,23 @@ shaders=(
   "$HOME/.config/hypr/shaders/crt_funny_2.frag"
   "$HOME/.config/hypr/shaders/crt_funny_3.frag"
   "$HOME/.config/hypr/shaders/crt_funny_4.frag"
+  "$HOME/.config/hypr/shaders/cyber_glitch.frag"
 )
 
-sleep_times=(0.10 0.08 0.11 0.07)
+sleep_times=(0.05 0.06 0.08 0.10 0.12 0.14)
+
+pick_random_shader() {
+  local index=$((RANDOM % ${#shaders[@]}))
+  printf '%s\n' "${shaders[$index]}"
+}
+
+pick_random_sleep() {
+  local index=$((RANDOM % ${#sleep_times[@]}))
+  printf '%s\n' "${sleep_times[$index]}"
+}
 
 while [ -f "$enabled_file" ]; do
-  for i in "${!shaders[@]}"; do
-    [ -f "$enabled_file" ] || exit 0
-    hyprctl keyword decoration:screen_shader "${shaders[$i]}" >/dev/null 2>&1 || true
-    sleep "${sleep_times[$i]}"
-  done
+  [ -f "$enabled_file" ] || exit 0
+  hyprctl keyword decoration:screen_shader "$(pick_random_shader)" >/dev/null 2>&1 || true
+  sleep "$(pick_random_sleep)"
 done

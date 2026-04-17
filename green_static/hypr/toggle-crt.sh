@@ -11,10 +11,8 @@ if [ -f "$enabled_file" ]; then
   rm -f "$enabled_file"
   pkill -TERM -f "$cycle_script" >/dev/null 2>&1 || true
   hyprctl keyword decoration:screen_shader "" >/dev/null 2>&1
-  notify-send "CRT shader off" "Screen shader disabled"
   exit 0
 fi
 
 touch "$enabled_file"
 nohup "$cycle_script" >/dev/null 2>&1 &
-notify-send "CRT shader on" "Animated CRT glitch enabled"
