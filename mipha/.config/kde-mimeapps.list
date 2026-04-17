@@ -1,0 +1,26 @@
+[Added Associations]
+application/pdf=firefox.desktop;
+inode/directory=org.kde.dolphin.desktop;
+image/png=imv.desktop;
+image/jpeg=imv.desktop;
+image/gif=imv.desktop;
+image/webp=imv.desktop;
+image/bmp=imv.desktop;
+image/tiff=imv.desktop;
+image/x-portable-pixmap=imv.desktop;
+image/x-portable-bitmap=imv.desktop;
+image/x-portable-graymap=imv.desktop;
+
+[Default Applications]
+inode/directory=org.kde.dolphin.desktop
+application/pdf=firefox.desktop
+image/png=imv.desktop
+image/jpeg=imv.desktop
+image/gif=imv.desktop
+image/webp=imv.desktop
+image/bmp=imv.desktop
+image/tiff=imv.desktop
+image/x-portable-pixmap=imv.desktop
+image/x-portable-bitmap=imv.desktop
+image/x-portable-graymap=imv.desktop
+image/svg+xml=firefox.desktop
