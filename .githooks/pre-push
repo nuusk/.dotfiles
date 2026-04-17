@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+scanner="$repo_root/scripts/privacy_scan_local.sh"
+tmp_diff="$(mktemp)"
+trap 'rm -f "$tmp_diff"' EXIT
+
+empty_tree="$(git hash-object -t tree /dev/null)"
+found_refs=0
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -z "${local_sha:-}" ] && continue
+  [ "$local_sha" = "0000000000000000000000000000000000000000" ] && continue
+  found_refs=1
+
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    git diff --no-color --unified=0 "$empty_tree" "$local_sha" >> "$tmp_diff"
+  else
+    git diff --no-color --unified=0 "$remote_sha" "$local_sha" >> "$tmp_diff"
+  fi
+done
+
+[ "$found_refs" -eq 0 ] && exit 0
+
+if [ ! -x "$scanner" ]; then
+  echo "privacy scan hook missing executable scanner: $scanner" >&2
+  exit 1
+fi
+
+"$scanner" < "$tmp_diff"

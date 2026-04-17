@@ -43,11 +43,19 @@ jobs:
         if: always()
         run: |
           if [ -f .opencode/reports/privacy-scan.md ]; then
-            {
-              echo "## OpenCode Privacy Scan"
-              echo
-              cat .opencode/reports/privacy-scan.md
-            } >> "$GITHUB_STEP_SUMMARY"
+            if grep -qx 'NO_FINDINGS' .opencode/reports/privacy-scan.md; then
+              {
+                echo "## OpenCode Privacy Scan"
+                echo
+                echo "No findings detected."
+              } >> "$GITHUB_STEP_SUMMARY"
+            else
+              {
+                echo "## OpenCode Privacy Scan"
+                echo
+                echo "Suspicious content was detected. Review the workflow privately and investigate locally."
+              } >> "$GITHUB_STEP_SUMMARY"
+            fi
           else
             {
               echo "## OpenCode Privacy Scan"
@@ -70,5 +78,4 @@ jobs:
           fi
 
           echo "Privacy/secret findings detected"
-          cat "$report"
           exit 1
