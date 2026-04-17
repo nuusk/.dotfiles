@@ -10,10 +10,10 @@ This directory intentionally omits live secrets and account-specific tokens.
   Global OpenCode config with the MTG planeswalker agents enabled and the old `build` / `plan` agents disabled.
 - `agents/`
   Primary agents:
-  - `jace-the-mind-sculptor`
-  - `teferi-hero-of-dominaria`
-  - `chandra-torch-of-defiance`
-  - `liliana-of-the-veil`
+  - `jace`
+  - `teferi`
+  - `chandra`
+  - `liliana`
 - `plugins/peon-ping.ts`
   Local OpenCode plugin.
 - `peon-ping/config.json`
@@ -100,7 +100,7 @@ This config disables OpenCode's built-in `build` and `plan` agents and replaces 
 
 Default agent:
 
-- `teferi-hero-of-dominaria`
+- `teferi`
 
 ## Notes
 

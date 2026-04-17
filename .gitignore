@@ -1,3 +1,5 @@
 # nushell history
 history.txt
 
+# OpenCode workflow artifacts
+.opencode/reports/privacy-scan.md

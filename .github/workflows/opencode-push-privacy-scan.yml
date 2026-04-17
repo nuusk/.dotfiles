@@ -1,0 +1,74 @@
+name: opencode-push-privacy-scan
+
+on:
+  push:
+
+jobs:
+  privacy-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Reset prior report
+        run: rm -f .opencode/reports/privacy-scan.md
+
+      - name: Run OpenCode privacy scan
+        uses: anomalyco/opencode/github@latest
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OC_PUSH_BASE: ${{ github.event.before }}
+          OC_PUSH_HEAD: ${{ github.sha }}
+        with:
+          model: openai/gpt-5
+          agent: davriel-rogue-shadowmage
+          prompt: |
+            Scan the changes introduced by this push for secrets, personal details, and accidental private disclosures.
+
+            Requirements:
+            - Prefer the pushed diff using OC_PUSH_BASE and OC_PUSH_HEAD.
+            - If OC_PUSH_BASE is invalid or all zeros, scan the repository.
+            - Write the final result to .opencode/reports/privacy-scan.md.
+            - If no findings exist, write exactly NO_FINDINGS.
+            - Do not modify any other files.
+
+      - name: Publish report to workflow summary
+        if: always()
+        run: |
+          if [ -f .opencode/reports/privacy-scan.md ]; then
+            {
+              echo "## OpenCode Privacy Scan"
+              echo
+              cat .opencode/reports/privacy-scan.md
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            {
+              echo "## OpenCode Privacy Scan"
+              echo
+              echo "No report file was produced."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Fail on findings
+        run: |
+          report=".opencode/reports/privacy-scan.md"
+          if [ ! -f "$report" ]; then
+            echo "Privacy scan report missing"
+            exit 1
+          fi
+
+          if grep -qx 'NO_FINDINGS' "$report"; then
+            echo "No findings detected"
+            exit 0
+          fi
+
+          echo "Privacy/secret findings detected"
+          cat "$report"
+          exit 1

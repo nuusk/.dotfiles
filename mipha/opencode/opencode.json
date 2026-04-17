@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "teferi-hero-of-dominaria",
+  "default_agent": "teferi",
   "agent": {
     "build": {
       "disable": true

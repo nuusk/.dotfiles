@@ -4,6 +4,8 @@ This repository contains the configuration files and profiles for tools that I u
 
 It also contains reusable theme bundles.
 
+It also contains repo-level OpenCode automation for GitHub workflows.
+
 - `green_static/`
   A portable Hyprland-centered theme/profile bundle with its own `README.md`, `INSTALLATION.md`, and `AGENTS.md`.
   Apply it from inside that directory with:
@@ -14,6 +16,10 @@ It also contains reusable theme bundles.
   ```
 
   See `green_static/INSTALLATION.md` for prerequisites and post-apply steps.
+
+- `.opencode/`
+  Repo-level OpenCode agents and workflow support.
+  See `.opencode/README.md` for the manual GitHub setup required, including Actions secrets.
 
 The structure represents my workstations. For example, in `fi`, you will find all the files corresponding to the configuration files on `fi`. Those files should be placed under $HOME directory on your system, so for example:
 
