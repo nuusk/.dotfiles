@@ -1,0 +1,74 @@
+* {
+    font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", monospace;
+    font-size: 12px;
+}
+
+window {
+    background-color: rgba(6, 10, 18, 0.985);
+    border: 1px solid rgba(0, 255, 128, 0.34);
+    border-radius: 4px;
+    box-shadow: 0 0 14px rgba(0, 255, 128, 0.18), 0 0 36px rgba(0, 229, 255, 0.05);
+}
+
+#outer-box {
+    margin: 0;
+    padding: 6px;
+}
+
+#input {
+    background-color: #0a0e17;
+    color: #80ffcc;
+    border: 1px solid #0d3326;
+    border-radius: 2px;
+    padding: 9px 12px;
+    margin: 0 0 6px 0;
+    font-size: 12px;
+    caret-color: #00ff80;
+}
+
+#input:focus {
+    border-color: #00ff80;
+    box-shadow: 0 0 8px rgba(0, 255, 128, 0.22);
+}
+
+#scroll {
+    margin: 0;
+    border: none;
+}
+
+#inner-box {
+    margin: 0;
+    padding: 0;
+}
+
+#entry {
+    background: transparent;
+    color: #80ffcc;
+    border: 1px solid transparent;
+    border-left: 2px solid transparent;
+    border-radius: 2px;
+    padding: 7px 10px;
+    margin: 2px 0;
+}
+
+#entry:selected {
+    background-color: rgba(0, 255, 128, 0.08);
+    border: 1px solid rgba(0, 255, 128, 0.16);
+    border-left: 2px solid #00ff80;
+    box-shadow: 0 0 6px rgba(0, 255, 128, 0.12);
+}
+
+#img {
+    margin-right: 10px;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+#text {
+    color: #80ffcc;
+}
+
+#text:selected {
+    color: #00ff80;
+    font-weight: 700;
+}

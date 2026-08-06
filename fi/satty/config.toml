@@ -1,0 +1,3 @@
+[general]
+# Keep copied screenshots available after Satty exits.
+copy-command = "/usr/bin/wl-copy"

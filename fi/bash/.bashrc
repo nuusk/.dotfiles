@@ -9,7 +9,6 @@
 alias ls=eza
 alias bat=cat
 alias grep='grep --color=auto'
-alias k='kubectl'
 PS1='[\u@\h \W]\$ '
 eval "$(starship init bash)"
 

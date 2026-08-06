@@ -47,6 +47,7 @@ copy_exec "$ROOT/hypr/awww_monitor_listener.sh" "$HOME/.config/hypr/awww_monitor
 copy_exec "$ROOT/hypr/awww_set_wallpaper.sh" "$HOME/.config/hypr/awww_set_wallpaper.sh"
 copy_exec "$ROOT/hypr/crt_cycle.sh" "$HOME/.config/hypr/crt_cycle.sh"
 copy_exec "$ROOT/hypr/toggle-crt.sh" "$HOME/.config/hypr/toggle-crt.sh"
+copy_exec "$ROOT/hypr/window-screenshot.sh" "$HOME/.config/hypr/window-screenshot.sh"
 copy_tree "$ROOT/hypr/shaders" "$HOME/.config/hypr/shaders"
 copy_raw "$ROOT/hypr/wallpaper.jpg" "$HOME/.config/hypr/wallpaper.jpg"
 copy_tree "$ROOT/wallpapers/ff7" "$HOME/code/backgrounds/cycling/ff7"
@@ -61,7 +62,9 @@ copy_text "$ROOT/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
 copy_text "$ROOT/dunst/dunstrc" "$HOME/.config/dunst/dunstrc"
 copy_text "$ROOT/wofi/config" "$HOME/.config/wofi/config"
 copy_text "$ROOT/wofi/style.css" "$HOME/.config/wofi/style.css"
-copy_text "$ROOT/gtk-3.0/gtk.css" "$HOME/.config/gtk-3.0/gtk.css"
+copy_tree "$ROOT/gtk-3.0" "$HOME/.config/gtk-3.0"
+copy_tree "$ROOT/gtk-4.0" "$HOME/.config/gtk-4.0"
+copy_text "$ROOT/satty/config.toml" "$HOME/.config/satty/config.toml"
 
 copy_text "$ROOT/nvim/lua/plugins/theme.lua" "$HOME/.config/nvim/lua/plugins/theme.lua"
 

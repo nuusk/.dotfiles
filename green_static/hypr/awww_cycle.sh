@@ -31,7 +31,7 @@ pick_next() {
 
   for i in "${!wallpapers[@]}"; do
     if [ "${wallpapers[$i]}" = "$current" ]; then
-      next_index=$(( (i + 1) % ${#wallpapers[@]} ))
+      next_index=$(((i + 1) % ${#wallpapers[@]}))
       printf '%s\n' "${wallpapers[$next_index]}"
       return 0
     fi

@@ -1,0 +1,56 @@
+QAbstractItemView,
+QListView,
+QTreeView,
+QTableView {
+    background-color: #0a0e17;
+    alternate-background-color: #0a0e17;
+    color: #d6ffe9;
+    selection-background-color: #00ff80;
+    selection-color: #0a0e17;
+    outline: 0;
+    show-decoration-selected: 1;
+}
+
+QAbstractItemView::item,
+QListView::item,
+QTreeView::item,
+QTableView::item {
+    background-color: transparent;
+    color: #d6ffe9;
+}
+
+QAbstractItemView::item:hover,
+QListView::item:hover,
+QTreeView::item:hover,
+QTableView::item:hover {
+    background-color: #111827;
+    color: #e6fff2;
+}
+
+QAbstractItemView::item:selected,
+QListView::item:selected,
+QTreeView::item:selected,
+QTableView::item:selected {
+    background-color: #00ff80;
+    color: #0a0e17;
+}
+
+QHeaderView::section {
+    background-color: #0a0e17;
+    color: #bfffdc;
+    border: none;
+    border-bottom: 1px solid #0d3326;
+    padding: 4px 6px;
+}
+
+QTreeView::branch,
+QListView::branch {
+    background: #0a0e17;
+}
+
+QLineEdit,
+KUrlNavigator,
+KUrlNavigatorDropDownButton,
+KUrlNavigatorButtonBase {
+    color: #d6ffe9;
+}

@@ -39,5 +39,5 @@ if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
   wallpaper="$fallback_wallpaper"
 fi
 
-printf '%s\n' "$wallpaper" > "$state_file"
+printf '%s\n' "$wallpaper" >"$state_file"
 "$HOME/.config/hypr/awww_set_wallpaper.sh" "$wallpaper"

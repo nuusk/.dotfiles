@@ -51,7 +51,7 @@ Keep the theme consistent with its current identity:
 
 ## Bundle Layout
 
-- `hypr/` compositor, wallpaper, lock/idle, shaders, launcher pulse script
+- `hypr/` compositor, wallpaper, lock/idle, shaders, launcher pulse script, and screenshot integration
 - `apply.sh` one-shot installer for the bundle
 - `waybar/` bar config and styles
 - `dolphin/` Dolphin config snapshot
@@ -60,7 +60,8 @@ Keep the theme consistent with its current identity:
 - `kitty/` terminal config
 - `dunst/` notifications
 - `wofi/` launcher
-- `gtk-3.0/` GTK overrides
+- `satty/` screenshot annotation and persistent clipboard configuration
+- `gtk-3.0/` and `gtk-4.0/` GTK overrides
 - `nvim/` Neovim theme override
 - `firefox/` reusable `userChrome.css`
 - `helpers/` helper scripts that are installed into `~/.local/bin` by `apply.sh`
@@ -94,6 +95,7 @@ After theme changes, validate at least the following:
 - open Kitty and verify border animation / shader pulse
 - open Wofi and verify dimming, shader pulse, icon rendering, and row styling
 - verify `dolphin` resolves to `~/.local/bin/dolphin`
+- copy a Satty screenshot, close Satty, and verify the image still pastes
 - send a `notify-send` test notification
 
 ## Portability Notes

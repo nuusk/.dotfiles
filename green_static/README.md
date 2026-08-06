@@ -27,7 +27,7 @@ This theme is closer to a cyberdeck / greenscreen terminal than a glossy neon da
 ## Included Components
 
 - `hypr/`
-  Hyprland config, wallpaper, `awww` wallpaper scripts, launcher pulse script, shaders, Hypridle, and Hyprlock files.
+  Hyprland config, wallpaper, `awww` wallpaper scripts, screenshot integration, launcher pulse script, shaders, Hypridle, and Hyprlock files.
 - `waybar/`
   Main bar config, CSS, and helper scripts for special-workspace / recording indicators.
 - `dolphin/`
@@ -40,8 +40,10 @@ This theme is closer to a cyberdeck / greenscreen terminal than a glossy neon da
   Notification theme.
 - `wofi/`
   Launcher config and styling.
-- `gtk-3.0/`
-  GTK color overrides.
+- `satty/`
+  Screenshot annotation config with persistent Wayland clipboard support through `wl-copy`.
+- `gtk-3.0/` and `gtk-4.0/`
+  GTK colors, settings, and window decoration assets.
 - `nvim/`
   Neovim palette override.
 - `firefox/`
@@ -58,7 +60,7 @@ cd ~/code/.dotfiles/green_static
 ./apply.sh
 ```
 
-`apply.sh` copies the profile into the current user's home, rewrites bundled `/home/nuus/...` paths to the target home directory, installs helper scripts into `~/.local/bin`, and updates all detected Firefox profiles.
+`apply.sh` copies the profile into the current user's home, rewrites bundled `/home/nuus/...` paths to the target home directory, installs helper scripts into `~/.local/bin`, configures Satty, and updates all detected Firefox profiles.
 
 ## Notes
 

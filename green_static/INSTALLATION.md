@@ -27,7 +27,9 @@ This bundle contains live config for:
 - Kitty
 - Dunst
 - Wofi
+- Satty
 - GTK 3
+- GTK 4
 - Neovim
 - Firefox `userChrome.css`, `userContent.css`, and `user.js`
 
@@ -51,7 +53,8 @@ Install or provide these before applying the theme:
 - `python3`
 - `grim`
 - `slurp`
-- `swappy`
+- `satty`
+- `wl-clipboard`
 - `brightnessctl`
 - `playerctl`
 - `pavucontrol`
@@ -117,6 +120,7 @@ cp ~/code/.dotfiles/green_static/hypr/awww_monitor_listener.sh ~/.config/hypr/aw
 cp ~/code/.dotfiles/green_static/hypr/awww_set_wallpaper.sh ~/.config/hypr/awww_set_wallpaper.sh
 cp ~/code/.dotfiles/green_static/hypr/crt_cycle.sh ~/.config/hypr/crt_cycle.sh
 cp ~/code/.dotfiles/green_static/hypr/toggle-crt.sh ~/.config/hypr/toggle-crt.sh
+cp ~/code/.dotfiles/green_static/hypr/window-screenshot.sh ~/.config/hypr/window-screenshot.sh
 cp ~/code/.dotfiles/green_static/hypr/wallpaper.jpg ~/.config/hypr/wallpaper.jpg
 cp ~/code/.dotfiles/green_static/hypr/shaders/*.frag ~/.config/hypr/shaders/
 mkdir -p ~/code/backgrounds/cycling/ff7
@@ -137,7 +141,10 @@ cp ~/code/.dotfiles/green_static/kitty/kitty.conf ~/.config/kitty/kitty.conf
 cp ~/code/.dotfiles/green_static/dunst/dunstrc ~/.config/dunst/dunstrc
 cp ~/code/.dotfiles/green_static/wofi/config ~/.config/wofi/config
 cp ~/code/.dotfiles/green_static/wofi/style.css ~/.config/wofi/style.css
-cp ~/code/.dotfiles/green_static/gtk-3.0/gtk.css ~/.config/gtk-3.0/gtk.css
+mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0 ~/.config/satty
+cp -r ~/code/.dotfiles/green_static/gtk-3.0/. ~/.config/gtk-3.0/
+cp -r ~/code/.dotfiles/green_static/gtk-4.0/. ~/.config/gtk-4.0/
+cp ~/code/.dotfiles/green_static/satty/config.toml ~/.config/satty/config.toml
 cp ~/code/.dotfiles/green_static/nvim/lua/plugins/theme.lua ~/.config/nvim/lua/plugins/theme.lua
 ```
 
@@ -186,6 +193,9 @@ After installation, verify at least:
 - `dunstctl reload ~/.config/dunst/dunstrc`
 - `awww query` shows `~/.config/hypr/wallpaper.jpg`
 - `Mod+R` starts/stops recording and Waybar shows `[REC]`
+- `Mod+A` opens a region screenshot in Satty
+- `Mod+D` opens a window screenshot in Satty
+- copied Satty images remain pasteable after Satty closes
 - `Mod+S`, `Mod+O`, and `Mod+Z` toggle Slack / Obsidian / Signal special workspaces
 - Wofi opens with screen dimming + glitch pulse
 - `nvim --headless "+qa"`
