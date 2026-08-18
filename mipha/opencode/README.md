@@ -7,13 +7,7 @@ This directory intentionally omits live secrets and account-specific tokens.
 ## Included
 
 - `opencode.json`
-  Global OpenCode config with the MTG planeswalker agents enabled and the old `build` / `plan` agents disabled.
-- `agents/`
-  Primary agents:
-  - `jace`
-  - `teferi`
-  - `chandra`
-  - `liliana`
+  Global OpenCode config with MCP entries.
 - `plugins/peon-ping.ts`
   Local OpenCode plugin.
 - `peon-ping/config.json`
@@ -30,8 +24,7 @@ mkdir -p ~/.config/opencode
 cp ~/code/.dotfiles/mipha/opencode/opencode.json ~/.config/opencode/opencode.json
 cp ~/code/.dotfiles/mipha/opencode/package.json ~/.config/opencode/package.json
 cp ~/code/.dotfiles/mipha/opencode/.gitignore ~/.config/opencode/.gitignore
-mkdir -p ~/.config/opencode/agents ~/.config/opencode/plugins ~/.config/opencode/peon-ping
-cp ~/code/.dotfiles/mipha/opencode/agents/* ~/.config/opencode/agents/
+mkdir -p ~/.config/opencode/plugins ~/.config/opencode/peon-ping
 cp ~/code/.dotfiles/mipha/opencode/plugins/* ~/.config/opencode/plugins/
 cp ~/code/.dotfiles/mipha/opencode/peon-ping/config.json ~/.config/opencode/peon-ping/config.json
 ```
@@ -93,14 +86,6 @@ You may also want to change:
 
 - `active_pack`
 - `default_pack`
-
-### 5. Built-in agent replacement
-
-This config disables OpenCode's built-in `build` and `plan` agents and replaces them with the planeswalker primary agents.
-
-Default agent:
-
-- `teferi`
 
 ## Notes
 

@@ -32,6 +32,281 @@ PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
 # Git
 export EDITOR=nvim
 
+_wt_context() {
+  local cmd=$1 main_worktree
+
+  if ! WT_REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null); then
+    echo "$cmd: not inside a git repository" >&2
+    return 1
+  fi
+
+  if ! main_worktree=$(git -C "$WT_REPO_ROOT" worktree list --porcelain | sed -n '1s/^worktree //p'); then
+    echo "$cmd: could not list git worktrees" >&2
+    return 1
+  fi
+  if [[ -z $main_worktree ]]; then
+    echo "$cmd: could not find the main git worktree" >&2
+    return 1
+  fi
+
+  WT_REPO=$(basename "$main_worktree")
+  WT_BASE="$HOME/worktrees/$WT_REPO"
+}
+
+wt() {
+  local branch worktree_path
+
+  if [[ $# -ne 1 ]]; then
+    echo "usage: wt <new-branch>" >&2
+    return 2
+  fi
+
+  branch=$1
+
+  _wt_context wt || return
+  worktree_path="$WT_BASE/$branch"
+
+  if [[ -e "$worktree_path" ]]; then
+    echo "wt: path already exists: $worktree_path" >&2
+    return 1
+  fi
+
+  mkdir -p "$(dirname "$worktree_path")" \
+    && git -C "$WT_REPO_ROOT" worktree add -b "$branch" "$worktree_path" \
+    && {
+      echo
+      echo "Created worktree:"
+      echo "  branch: $branch"
+      echo "  path:   $worktree_path"
+      echo
+
+      if command -v figlet >/dev/null 2>&1; then
+        figlet "$branch"
+      else
+        local border
+        border=$(printf '%*s' "$((${#branch} + 4))" '' | tr ' ' '=')
+        echo "$border"
+        echo "= $branch ="
+        echo "$border"
+      fi
+
+      cd "$worktree_path"
+    }
+}
+
+wl() {
+  local count=0
+
+  _wt_context wl || return
+
+  count=$(git -C "$WT_REPO_ROOT" worktree list --porcelain | sed -n 's/^worktree //p' | awk -v base="$WT_BASE/" 'index($0, base) == 1 { count++ } END { print count + 0 }')
+  if [[ $count -eq 0 ]]; then
+    echo "wl: no worktrees for $WT_REPO under $WT_BASE"
+    return
+  fi
+
+  echo "Worktrees for $WT_REPO:"
+  printf "%-32s %-32s %s\n" "name" "branch" "path"
+  git -C "$WT_REPO_ROOT" worktree list --porcelain | awk -v base="$WT_BASE/" '
+    /^worktree / {
+      path = substr($0, 10)
+      branch = "(detached)"
+    }
+    /^branch / {
+      branch = substr($0, 8)
+      sub(/^refs\/heads\//, "", branch)
+    }
+    /^$/ {
+      print_entry()
+      path = ""
+      branch = "(detached)"
+    }
+    END {
+      print_entry()
+    }
+    function print_entry() {
+      if (path != "" && index(path, base) == 1) {
+        name = substr(path, length(base) + 1)
+        printf "%-32s %-32s %s\n", name, branch, path
+        found = 1
+      }
+    }
+  '
+}
+
+wr() {
+  local name worktree_path
+
+  if [[ $# -ne 1 ]]; then
+    echo "usage: wr <worktree-name>" >&2
+    return 2
+  fi
+
+  name=$1
+  _wt_context wr || return
+  worktree_path="$WT_BASE/$name"
+
+  if [[ ! -d "$worktree_path" ]]; then
+    echo "wr: no worktree at $worktree_path" >&2
+    return 1
+  fi
+
+  git -C "$WT_REPO_ROOT" worktree remove "$worktree_path" \
+    && echo "Removed worktree: $worktree_path"
+}
+
+wm() {
+  _wt_context wm || return
+
+  cd "$(git -C "$WT_REPO_ROOT" worktree list --porcelain | sed -n '1s/^worktree //p')" \
+    && echo "Switched to main worktree: $PWD"
+}
+
+wra() {
+  local worktree worktrees
+  local removed=0
+
+  _wt_context wra || return
+
+  mapfile -t worktrees < <(git -C "$WT_REPO_ROOT" worktree list --porcelain | sed -n 's/^worktree //p' | awk -v base="$WT_BASE/" 'index($0, base) == 1')
+
+  if [[ ${#worktrees[@]} -eq 0 ]]; then
+    echo "wra: no worktrees to clean for $WT_REPO under $WT_BASE"
+    return
+  fi
+
+  for worktree in "${worktrees[@]}"; do
+    git -C "$WT_REPO_ROOT" worktree remove "$worktree" || return
+    echo "Removed worktree: $worktree"
+    ((removed++))
+  done
+
+  git -C "$WT_REPO_ROOT" worktree prune
+  echo "Cleaned $removed worktree(s) for $WT_REPO."
+}
+
+ws() {
+  local selected path
+  local workspaces=()
+
+  if [[ ! -d "$HOME/worktrees" ]]; then
+    echo "ws: no workspace directory at $HOME/worktrees" >&2
+    return 1
+  fi
+
+  mapfile -t workspaces < <(
+    find "$HOME/worktrees" -name .git -print 2>/dev/null | while IFS= read -r git_meta; do
+      path=${git_meta%/.git}
+      git -C "$path" rev-parse --is-inside-work-tree >/dev/null 2>&1 || continue
+      printf '%s\t%s\n' "${path#"$HOME/worktrees/"}" "$path"
+    done | sort
+  )
+
+  if [[ ${#workspaces[@]} -eq 0 ]]; then
+    echo "ws: no workspaces found under $HOME/worktrees" >&2
+    return 1
+  fi
+
+  if [[ -t 0 && -t 1 ]] && command -v fzf >/dev/null 2>&1; then
+    selected=$(printf '%s\n' "${workspaces[@]}" | fzf --prompt='workspace> ' --with-nth=1 --delimiter=$'\t') || return
+  else
+    select selected in "${workspaces[@]}"; do
+      [[ -n $selected ]] && break
+    done
+  fi
+
+  path=${selected#*$'\t'}
+  if [[ ! -d "$path" ]]; then
+    echo "ws: selected path does not exist: $path" >&2
+    return 1
+  fi
+
+  cd "$path" && echo "Switched to workspace: ${path#"$HOME/worktrees/"}"
+}
+
+_wa_latest_codex_session() {
+  local root=$1 marker=$2
+  local file line session_id
+
+  find "$HOME/.codex/sessions" -type f -newer "$marker" -name 'rollout-*.jsonl' -printf '%T@ %p\n' 2>/dev/null \
+    | sort -nr \
+    | while IFS= read -r file; do
+        file=${file#* }
+        line=$(sed -n '1p' "$file")
+        if printf '%s\n' "$line" | grep -Fq "\"cwd\":\"$root\""; then
+          session_id=$(printf '%s\n' "$line" | sed -n 's/.*"id":"\([^"]*\)".*/\1/p')
+          if [[ -n $session_id ]]; then
+            printf '%s\n' "$session_id"
+            return 0
+          fi
+        fi
+      done
+}
+
+wa() {
+  local root state_dir key session_file session_id marker status
+
+  if ! root=$(git rev-parse --show-toplevel 2>/dev/null); then
+    echo "wa: not inside a git repository" >&2
+    return 1
+  fi
+
+  state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/codex-worktree-agents"
+  mkdir -p "$state_dir" || return
+
+  key=$(printf '%s' "$root" | sha1sum | awk '{print $1}')
+  session_file="$state_dir/$key"
+
+  if [[ -s $session_file ]]; then
+    read -r session_id < "$session_file"
+    echo "Resuming Codex agent for: $root"
+    codex resume -C "$root" "$session_id" "$@"
+    return
+  fi
+
+  marker=$(mktemp "${TMPDIR:-/tmp}/wa-session.XXXXXX") || return
+  echo "Starting new Codex agent for: $root"
+  codex -C "$root" "$@"
+  status=$?
+
+  session_id=$(_wa_latest_codex_session "$root" "$marker")
+  rm -f "$marker"
+
+  if [[ -n $session_id ]]; then
+    {
+      printf '%s\n' "$session_id"
+      printf '%s\n' "$root"
+    } >"$session_file"
+    echo "Saved Codex agent session for this worktree: $session_id"
+  else
+    echo "wa: could not find a new Codex session to save for $root" >&2
+  fi
+
+  return "$status"
+}
+
+h() {
+  cat <<'EOF'
+Custom shortcuts
+
+Git worktrees
+  wt <branch>   create branch and worktree at ~/worktrees/<repo>/<branch>, then cd there
+  wl            list current repo worktrees under ~/worktrees/<repo>
+  wr <name>     remove ~/worktrees/<repo>/<name>
+  wm            cd to the current repo main worktree
+  wra           remove all current repo worktrees under ~/worktrees/<repo>
+  ws            search all workspaces under ~/worktrees, then cd to the selected one
+  wa            open the Codex agent session assigned to the current worktree
+
+Aliases
+  k             kubectl
+  ls            eza
+  bat           cat
+  grep          grep --color=auto
+  peon          peon-ping controls
+EOF
+}
+
 # Secrets
 [ -f "$HOME/.secrets/env" ] && source "$HOME/.secrets/env"
 

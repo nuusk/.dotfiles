@@ -1,14 +1,5 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "teferi",
-  "agent": {
-    "build": {
-      "disable": true
-    },
-    "plan": {
-      "disable": true
-    }
-  },
   "mcp": {
     "atlassian": {
       "type": "remote",

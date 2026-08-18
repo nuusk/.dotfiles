@@ -90,7 +90,8 @@
         "bat": "BAT0",
         "interval": 30,
         "format": "<span color='#5ea488'>BAT</span> {capacity}%",
-        "format-charging": "<span color='#00ff80'>BAT+</span> {capacity}%",
+        "format-charging": "<span color='#00ff80'><b>[CHARGING]</b></span> {capacity}%",
+        "format-full": "<span color='#00ff80'><b>[CHARGED]</b></span>",
         "format-plugged": "<span color='#5ea488'>BAT</span> AC",
         "states": {
             "warning": 25,

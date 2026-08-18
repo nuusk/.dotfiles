@@ -1,0 +1,14 @@
+#
+# ~/.bash_profile
+#
+
+[[ -f ~/.bashrc ]] && . ~/.bashrc
+
+
+# Added by Toolbox App
+export PATH="$PATH:/home/nuus/.local/share/JetBrains/Toolbox/scripts"
+export PATH=$PATH:$(go env GOPATH)/bin
+export PATH=$PATH:$(npm -g prefix)/bin
+
+# kubectl
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
