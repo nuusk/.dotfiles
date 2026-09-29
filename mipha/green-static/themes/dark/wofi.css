@@ -1,0 +1,13 @@
+@define-color window-bg #060a12;
+@define-color input-bg #0a0e17;
+@define-color row-bg #060a12;
+@define-color fg #80ffcc;
+@define-color fg-secondary #5ea488;
+@define-color primary #00ff80;
+@define-color selected-bg #10291f;
+@define-color selected-fg #b3ffdd;
+@define-color border #0d3326;
+@define-color window-border #00ff80;
+@define-color window-border-alt #00e5ff;
+@define-color shadow rgba(0, 255, 128, 0.20);
+@define-color focus-glow rgba(0, 255, 128, 0.20);

@@ -18,18 +18,20 @@ Defined in `bashrc`.
 ```bash
 wt <branch>   # create branch and worktree at ~/worktrees/<repo>/<branch>, then cd there
 wl            # list current repo worktrees under ~/worktrees/<repo>
-wr <name>     # remove ~/worktrees/<repo>/<name>
+wr            # remove the current worktree, then cd to the main worktree
+wr <name>     # force remove ~/worktrees/<repo>/<name>
 wm            # cd to the current repo main worktree
 wra           # remove all current repo worktrees under ~/worktrees/<repo>
 ws            # search all workspaces under ~/worktrees with fzf, then cd to the selected one
-wa            # open the Codex agent session assigned to the current worktree
+wa            # resume or start the Codex agent session for the current worktree
+wa <name>     # resume/start the agent for ~/worktrees/<repo>/<name>
+wa --pick     # choose a worktree, then resume/start its agent session
+wa --list     # list worktrees and their latest Codex session
+wa --new      # start a fresh Codex session for the current worktree
 ```
 
-`wa` stores the per-worktree Codex session mapping in:
-
-```bash
-~/.local/state/codex-worktree-agents/
-```
+`wa` links worktrees to agents by scanning Codex session metadata under `~/.codex/sessions`
+and matching the session `cwd` to the worktree path.
 
 ### Other aliases
 

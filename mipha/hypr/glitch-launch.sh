@@ -1,6 +1,6 @@
 #!/bin/bash
 
-shader="/home/nuus/.config/hypr/shaders/cyber_glitch.frag"
+shader="$HOME/.config/hypr/shaders/cyber_glitch.frag"
 
 if [ "$1" = "--shader" ] && [ -n "$2" ]; then
   shader="$2"

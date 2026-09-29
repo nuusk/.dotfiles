@@ -45,3 +45,11 @@ def parse-line-protocol [] {
   }
 }
 
+
+# pnpm
+$env.PNPM_HOME = ($env.HOME | path join ".local" "share" "pnpm")
+$env.PATH = ($env.PATH | split row (char esep) | prepend $env.PNPM_HOME )
+# pnpm end
+
+bash /usr/share/nvm/init-nvm.sh
+source /usr/share/nvm/init-nvm.sh

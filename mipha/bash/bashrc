@@ -10,6 +10,7 @@ alias ls=eza
 alias bat=cat
 alias grep='grep --color=auto'
 alias k=kubectl
+alias p=python3
 complete -o default -F __start_kubectl k
 PS1='[\u@\h \W]\$ '
 eval "$(starship init bash)"
@@ -71,9 +72,9 @@ wt() {
     return 1
   fi
 
-  mkdir -p "$(dirname "$worktree_path")" \
-    && git -C "$WT_REPO_ROOT" worktree add -b "$branch" "$worktree_path" \
-    && {
+  mkdir -p "$(dirname "$worktree_path")" &&
+    git -C "$WT_REPO_ROOT" worktree add -b "$branch" "$worktree_path" &&
+    {
       echo
       echo "Created worktree:"
       echo "  branch: $branch"
@@ -135,15 +136,36 @@ wl() {
 }
 
 wr() {
-  local name worktree_path
+  local name worktree_path current_worktree main_worktree
 
-  if [[ $# -ne 1 ]]; then
-    echo "usage: wr <worktree-name>" >&2
+  if [[ $# -gt 1 ]]; then
+    echo "usage: wr [worktree-name]" >&2
     return 2
   fi
 
-  name=$1
   _wt_context wr || return
+
+  if [[ $# -eq 0 ]]; then
+    current_worktree=$WT_REPO_ROOT
+    main_worktree=$(git -C "$current_worktree" worktree list --porcelain | sed -n '1s/^worktree //p')
+
+    if [[ -z $main_worktree ]]; then
+      echo "wr: could not find the main git worktree" >&2
+      return 1
+    fi
+    if [[ $current_worktree -ef $main_worktree ]]; then
+      echo "wr: cannot remove the main worktree" >&2
+      return 1
+    fi
+
+    cd "$main_worktree" || return
+    echo "Switched to main worktree: $PWD"
+    git -C "$main_worktree" worktree remove --force "$current_worktree" &&
+      echo "Removed worktree: $current_worktree"
+    return
+  fi
+
+  name=$1
   worktree_path="$WT_BASE/$name"
 
   if [[ ! -d "$worktree_path" ]]; then
@@ -151,15 +173,15 @@ wr() {
     return 1
   fi
 
-  git -C "$WT_REPO_ROOT" worktree remove "$worktree_path" \
-    && echo "Removed worktree: $worktree_path"
+  git -C "$WT_REPO_ROOT" worktree remove --force "$worktree_path" &&
+    echo "Removed worktree: $worktree_path"
 }
 
 wm() {
   _wt_context wm || return
 
-  cd "$(git -C "$WT_REPO_ROOT" worktree list --porcelain | sed -n '1s/^worktree //p')" \
-    && echo "Switched to main worktree: $PWD"
+  cd "$(git -C "$WT_REPO_ROOT" worktree list --porcelain | sed -n '1s/^worktree //p')" &&
+    echo "Switched to main worktree: $PWD"
 }
 
 wra() {
@@ -224,65 +246,218 @@ ws() {
   cd "$path" && echo "Switched to workspace: ${path#"$HOME/worktrees/"}"
 }
 
-_wa_latest_codex_session() {
-  local root=$1 marker=$2
-  local file line session_id
+_wa_workspace_entries() {
+  [[ -d "$HOME/worktrees" ]] || return
 
-  find "$HOME/.codex/sessions" -type f -newer "$marker" -name 'rollout-*.jsonl' -printf '%T@ %p\n' 2>/dev/null \
-    | sort -nr \
-    | while IFS= read -r file; do
-        file=${file#* }
-        line=$(sed -n '1p' "$file")
-        if printf '%s\n' "$line" | grep -Fq "\"cwd\":\"$root\""; then
-          session_id=$(printf '%s\n' "$line" | sed -n 's/.*"id":"\([^"]*\)".*/\1/p')
-          if [[ -n $session_id ]]; then
-            printf '%s\n' "$session_id"
-            return 0
-          fi
-        fi
-      done
+  find "$HOME/worktrees" -name .git -print 2>/dev/null | while IFS= read -r git_meta; do
+    local path
+    path=${git_meta%/.git}
+    git -C "$path" rev-parse --is-inside-work-tree >/dev/null 2>&1 || continue
+    printf '%s\t%s\n' "${path#"$HOME/worktrees/"}" "$path"
+  done | sort
 }
 
-wa() {
-  local root state_dir key session_file session_id marker status
+_wa_session_meta() {
+  local file=$1 line payload root session_id
 
-  if ! root=$(git rev-parse --show-toplevel 2>/dev/null); then
-    echo "wa: not inside a git repository" >&2
+  IFS= read -r line <"$file" || return 1
+  [[ $line == *'"type":"session_meta"'* && $line == *'"payload":{'* ]] || return 1
+
+  payload=${line#*'"payload":{'}
+  if [[ $payload == *'"session_id":"'* ]]; then
+    session_id=${payload#*'"session_id":"'}
+  elif [[ $payload == *'"id":"'* ]]; then
+    session_id=${payload#*'"id":"'}
+  else
+    return 1
+  fi
+  session_id=${session_id%%\"*}
+
+  [[ $payload == *'"cwd":"'* ]] || return 1
+  root=${payload#*'"cwd":"'}
+  root=${root%%\"*}
+
+  [[ -n $root && -n $session_id ]] || return 1
+  printf '%s\t%s\n' "$root" "$session_id"
+}
+
+_wa_session_entries() {
+  [[ -d "$HOME/.codex/sessions" ]] || return
+
+  find "$HOME/.codex/sessions" -type f -name 'rollout-*.jsonl' -printf '%T@\t%p\n' 2>/dev/null |
+    sort -nr |
+    while IFS=$'\t' read -r _ file; do
+      local meta
+      meta=$(_wa_session_meta "$file") || continue
+      printf '%s\t%s\n' "$meta" "$file"
+    done
+}
+
+_wa_latest_session_for_root() {
+  local root=$1
+  local file meta session_root session_id _
+
+  [[ -d "$HOME/.codex/sessions" ]] || return 1
+
+  while IFS=$'\t' read -r _ file; do
+    meta=$(_wa_session_meta "$file") || continue
+    IFS=$'\t' read -r session_root session_id <<<"$meta"
+    if [[ $session_root == "$root" ]]; then
+      printf '%s\n' "$session_id"
+      return 0
+    fi
+  done < <(find "$HOME/.codex/sessions" -type f -name 'rollout-*.jsonl' -printf '%T@\t%p\n' 2>/dev/null | sort -nr)
+
+  return 1
+}
+
+_wa_resolve_root() {
+  local target=${1:-}
+  local current_root main_worktree base root
+  local matches=()
+
+  if [[ -z $target || $target == "." ]]; then
+    if ! git rev-parse --show-toplevel 2>/dev/null; then
+      echo "wa: not inside a git repository; use wa --pick or wa <worktree-name>" >&2
+      return 1
+    fi
+    return
+  fi
+
+  if [[ -d $target ]]; then
+    git -C "$target" rev-parse --show-toplevel 2>/dev/null
+    return
+  fi
+
+  if [[ -d "$HOME/worktrees/$target" ]]; then
+    git -C "$HOME/worktrees/$target" rev-parse --show-toplevel 2>/dev/null
+    return
+  fi
+
+  if current_root=$(git rev-parse --show-toplevel 2>/dev/null) &&
+    main_worktree=$(git -C "$current_root" worktree list --porcelain | sed -n '1s/^worktree //p'); then
+    base="$HOME/worktrees/$(basename "$main_worktree")"
+    if [[ -d "$base/$target" ]]; then
+      git -C "$base/$target" rev-parse --show-toplevel 2>/dev/null
+      return
+    fi
+  fi
+
+  while IFS=$'\t' read -r _ root; do
+    [[ ${root##*/} == "$target" ]] && matches+=("$root")
+  done < <(_wa_workspace_entries)
+
+  case ${#matches[@]} in
+  1)
+    printf '%s\n' "${matches[0]}"
+    ;;
+  0)
+    echo "wa: could not find worktree: $target" >&2
+    return 1
+    ;;
+  *)
+    echo "wa: ambiguous worktree name: $target" >&2
+    printf '  %s\n' "${matches[@]}" >&2
+    return 1
+    ;;
+  esac
+}
+
+_wa_select_root() {
+  local selected
+  local workspaces=()
+
+  mapfile -t workspaces < <(_wa_workspace_entries)
+  if [[ ${#workspaces[@]} -eq 0 ]]; then
+    echo "wa: no workspaces found under $HOME/worktrees" >&2
     return 1
   fi
 
-  state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/codex-worktree-agents"
-  mkdir -p "$state_dir" || return
+  if [[ -t 0 && -t 1 ]] && command -v fzf >/dev/null 2>&1; then
+    selected=$(printf '%s\n' "${workspaces[@]}" | fzf --prompt='agent> ' --with-nth=1 --delimiter=$'\t') || return
+  else
+    select selected in "${workspaces[@]}"; do
+      [[ -n $selected ]] && break
+    done
+  fi
 
-  key=$(printf '%s' "$root" | sha1sum | awk '{print $1}')
-  session_file="$state_dir/$key"
+  printf '%s\n' "${selected#*$'\t'}"
+}
 
-  if [[ -s $session_file ]]; then
-    read -r session_id < "$session_file"
+_wa_list() {
+  local label root session_id
+  declare -A latest_sessions=()
+
+  while IFS=$'\t' read -r root session_id _; do
+    [[ -n ${latest_sessions[$root]:-} ]] && continue
+    latest_sessions[$root]=$session_id
+  done < <(_wa_session_entries)
+
+  printf "%-40s %-36s %s\n" "workspace" "latest session" "path"
+  while IFS=$'\t' read -r label root; do
+    session_id=${latest_sessions[$root]:-}
+    [[ -n $session_id ]] || session_id="-"
+    printf "%-40s %-36s %s\n" "$label" "$session_id" "$root"
+  done < <(_wa_workspace_entries)
+}
+
+_wa_help() {
+  cat <<'EOF'
+usage:
+  wa              resume latest Codex session for this worktree, or start one
+  wa <name>       resume/start session for ~/worktrees/<repo>/<name>
+  wa <repo/name>  resume/start session for ~/worktrees/<repo>/<name>
+  wa --pick       choose a worktree, then resume/start its session
+  wa --list       list worktrees and their latest Codex session
+  wa --new        start a fresh Codex session for this worktree
+EOF
+}
+
+wa() {
+  local mode=resume target root session_id
+
+  case ${1:-} in
+  -h | --help)
+    _wa_help
+    return
+    ;;
+  --list)
+    _wa_list
+    return
+    ;;
+  --new)
+    mode=new
+    shift
+    ;;
+  --pick)
+    root=$(_wa_select_root) || return
+    shift
+    ;;
+  esac
+
+  if [[ -z ${root:-} ]]; then
+    if [[ ${1:-} == "--" ]]; then
+      shift
+    elif [[ -n ${1:-} && ${1:-} != -* ]]; then
+      target=$1
+      shift
+    fi
+
+    root=$(_wa_resolve_root "$target") || return
+  fi
+
+  if [[ ${1:-} == "--" ]]; then
+    shift
+  fi
+
+  if [[ $mode != new ]] && session_id=$(_wa_latest_session_for_root "$root"); then
     echo "Resuming Codex agent for: $root"
     codex resume -C "$root" "$session_id" "$@"
     return
   fi
 
-  marker=$(mktemp "${TMPDIR:-/tmp}/wa-session.XXXXXX") || return
   echo "Starting new Codex agent for: $root"
   codex -C "$root" "$@"
-  status=$?
-
-  session_id=$(_wa_latest_codex_session "$root" "$marker")
-  rm -f "$marker"
-
-  if [[ -n $session_id ]]; then
-    {
-      printf '%s\n' "$session_id"
-      printf '%s\n' "$root"
-    } >"$session_file"
-    echo "Saved Codex agent session for this worktree: $session_id"
-  else
-    echo "wa: could not find a new Codex session to save for $root" >&2
-  fi
-
-  return "$status"
 }
 
 h() {
@@ -292,11 +467,14 @@ Custom shortcuts
 Git worktrees
   wt <branch>   create branch and worktree at ~/worktrees/<repo>/<branch>, then cd there
   wl            list current repo worktrees under ~/worktrees/<repo>
-  wr <name>     remove ~/worktrees/<repo>/<name>
+  wr            remove the current worktree, then cd to the main worktree
+  wr <name>     force remove ~/worktrees/<repo>/<name>
   wm            cd to the current repo main worktree
   wra           remove all current repo worktrees under ~/worktrees/<repo>
   ws            search all workspaces under ~/worktrees, then cd to the selected one
-  wa            open the Codex agent session assigned to the current worktree
+  wa            resume or start the Codex agent session for the current worktree
+  wa --pick     choose a worktree, then resume/start its agent session
+  wa --list     list worktrees and their latest Codex session
 
 Aliases
   k             kubectl
@@ -311,5 +489,5 @@ EOF
 [ -f "$HOME/.secrets/env" ] && source "$HOME/.secrets/env"
 
 # peon-ping quick controls
-alias peon="bash /home/nuus/.claude/hooks/peon-ping/peon.sh"
-[ -f /home/nuus/.claude/hooks/peon-ping/completions.bash ] && source /home/nuus/.claude/hooks/peon-ping/completions.bash
+alias peon="bash $HOME/.claude/hooks/peon-ping/peon.sh"
+[ -f $HOME/.claude/hooks/peon-ping/completions.bash ] && source $HOME/.claude/hooks/peon-ping/completions.bash

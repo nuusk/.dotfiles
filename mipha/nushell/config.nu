@@ -45,3 +45,8 @@ source ~/.cache/carapace/init.nu
 # Gemini CLI setup
 $env.GOOGLE_CLOUD_PROJECT = 'atreides-465401'
 
+# NVIM as default editor
+$env.EDITOR = 'nvim'
+
+# GO
+$env.GOEXPERIMENTAL = 'synctest'

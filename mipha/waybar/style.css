@@ -1,14 +1,4 @@
-@define-color bg #0a0e17;
-@define-color bg-card #111827;
-@define-color bg-muted #1a2332;
-@define-color fg #80ffcc;
-@define-color fg-dim #5ea488;
-@define-color primary #00ff80;
-@define-color accent #00e5ff;
-@define-color secondary #bf5af2;
-@define-color red #ff453a;
-@define-color yellow #ffd60a;
-@define-color border #0d3326;
+@import url("theme.css");
 
 * {
     font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", "JetBrainsMono Nerd Font", monospace;
@@ -21,8 +11,8 @@
 }
 
 window#waybar {
-    background: rgba(10, 14, 23, 0.92);
-    border: 1px solid rgba(0, 255, 128, 0.22);
+    background: @bar-bg;
+    border: 1px solid @border-soft;
     border-radius: 2px;
     box-shadow: none;
     color: @fg;
@@ -40,6 +30,7 @@ window#waybar {
 #bluetooth,
 #language,
 #idle_inhibitor,
+#custom-theme,
 #custom-dunst,
 #custom-mic-mute,
 #custom-recording,
@@ -83,14 +74,14 @@ window#waybar {
 
 #workspaces button.active {
     color: @primary;
-    background: rgba(0, 255, 128, 0.08);
+    background: @primary-soft;
     box-shadow: none;
     font-weight: 700;
 }
 
 #custom-special-workspace {
     color: @accent;
-    background: rgba(0, 229, 255, 0.08);
+    background: @accent-soft;
     font-weight: 700;
 }
 
@@ -128,15 +119,29 @@ window#waybar {
     padding: 0 6px;
 }
 
+#custom-theme {
+    color: @accent;
+    font-size: 14px;
+    padding: 0 7px;
+}
+
+#custom-theme.light {
+    color: @primary;
+}
+
+#custom-theme:hover {
+    background: @primary-soft;
+}
+
 #custom-recording.recording {
     color: @red;
-    background: rgba(255, 69, 58, 0.10);
+    background: @red-soft;
     font-weight: 700;
 }
 
 #custom-mic-mute.muted {
     color: @red;
-    background: rgba(255, 69, 58, 0.10);
+    background: @red-soft;
     font-weight: 700;
 }
 
@@ -163,7 +168,14 @@ window#waybar {
 #battery.critical,
 #battery.urgent {
     color: @red;
-    box-shadow: 0 0 10px rgba(255, 69, 58, 0.25);
+    box-shadow: 0 0 10px @red-glow;
+}
+
+#battery.charging,
+#battery.plugged,
+#battery.full {
+    color: @primary;
+    font-weight: 700;
 }
 
 #clock {

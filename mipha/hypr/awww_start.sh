@@ -3,14 +3,11 @@ set -euo pipefail
 
 state_dir="${XDG_RUNTIME_DIR:-/tmp}/green_static"
 state_file="$state_dir/current_wallpaper.path"
-collection_dir="$HOME/code/backgrounds/cycling/ff7"
+source "$HOME/.config/hypr/awww_collection.sh"
+load_wallpaper_config
 fallback_wallpaper="$HOME/.config/hypr/wallpaper.jpg"
 
 mkdir -p "$state_dir"
-
-collect_first_wallpaper() {
-  find "$collection_dir" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | sort | head -n1
-}
 
 pkill hyprpaper >/dev/null 2>&1 || true
 
@@ -31,9 +28,7 @@ if [ -f "$state_file" ]; then
   wallpaper=$(<"$state_file")
 fi
 
-if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
-  wallpaper="$(collect_first_wallpaper)"
-fi
+wallpaper="$(pick_wallpaper "$wallpaper")" || wallpaper="$fallback_wallpaper"
 
 if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
   wallpaper="$fallback_wallpaper"

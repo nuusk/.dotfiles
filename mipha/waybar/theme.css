@@ -1,0 +1,17 @@
+@define-color bg #0a0e17;
+@define-color bg-card #111827;
+@define-color bg-muted #1a2332;
+@define-color fg #80ffcc;
+@define-color fg-dim #5ea488;
+@define-color primary #00ff80;
+@define-color accent #00e5ff;
+@define-color secondary #bf5af2;
+@define-color red #ff453a;
+@define-color yellow #ffd60a;
+@define-color border #0d3326;
+@define-color bar-bg rgba(10, 14, 23, 0.92);
+@define-color border-soft rgba(0, 255, 128, 0.22);
+@define-color primary-soft rgba(0, 255, 128, 0.08);
+@define-color accent-soft rgba(0, 229, 255, 0.08);
+@define-color red-soft rgba(255, 69, 58, 0.10);
+@define-color red-glow rgba(255, 69, 58, 0.25);

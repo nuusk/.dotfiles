@@ -1,0 +1,85 @@
+/* Keep the installed Dark Space theme in dark mode, but neutralize it when
+ * the desktop advertises a light appearance. */
+@media not (-moz-system-dark-theme) {
+  :root {
+    color-scheme: light !important;
+    --lwt-accent-color: #e5ece8 !important;
+    --lwt-accent-color-inactive: #f3f6f4 !important;
+    --lwt-text-color: #14251f !important;
+    --toolbar-background-color: #f3f6f4 !important;
+    --toolbar-text-color: #14251f !important;
+    --toolbar-color-scheme: light !important;
+    --toolbar-field-background-color: #ffffff !important;
+    --toolbar-field-color: #14251f !important;
+    --toolbar-field-focus-background-color: #ffffff !important;
+    --toolbar-field-focus-color: #14251f !important;
+    --toolbar-field-border-color: #9eafa7 !important;
+    --toolbar-field-focus-border-color: #006b46 !important;
+    --toolbar-field-highlight: #d8eee3 !important;
+    --toolbar-field-highlight-text: #003d29 !important;
+    --tab-selected-bgcolor: #ffffff !important;
+    --tab-selected-textcolor: #14251f !important;
+    --tabs-navbar-separator-color: #9eafa7 !important;
+    --arrowpanel-background: #ffffff !important;
+    --arrowpanel-color: #14251f !important;
+    --arrowpanel-border-color: #9eafa7 !important;
+    --sidebar-background-color: #f3f6f4 !important;
+    --sidebar-text-color: #14251f !important;
+    --sidebar-border-color: #9eafa7 !important;
+    --chrome-content-separator-color: #9eafa7 !important;
+  }
+
+  #navigator-toolbox,
+  #TabsToolbar,
+  #nav-bar,
+  #PersonalToolbar {
+    color: #14251f !important;
+    background-color: #f3f6f4 !important;
+    background-image: none !important;
+  }
+
+  #urlbar,
+  #urlbar-background,
+  #urlbar-input-container,
+  #searchbar,
+  #searchbar .searchbar-textbox {
+    color: #14251f !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border-color: #9eafa7 !important;
+  }
+
+  #urlbar-input,
+  #searchbar input {
+    color: #14251f !important;
+    background-color: transparent !important;
+    caret-color: #006b46 !important;
+  }
+
+  #urlbar[open] > .urlbarView,
+  .urlbarView-body-inner {
+    color: #14251f !important;
+    background-color: #ffffff !important;
+    border-color: #9eafa7 !important;
+  }
+
+  .urlbarView-row[selected] {
+    color: #003d29 !important;
+    background-color: #d8eee3 !important;
+  }
+
+  #urlbar[focused] > #urlbar-background,
+  #searchbar:focus-within .searchbar-textbox {
+    border-color: #006b46 !important;
+    box-shadow: 0 0 0 1px #006b46 !important;
+  }
+
+  .tabbrowser-tab[selected] .tab-background {
+    background-color: #ffffff !important;
+    box-shadow: inset 0 -2px #006b46 !important;
+  }
+
+  .tabbrowser-tab:not([selected]) {
+    color: #405b50 !important;
+  }
+}

@@ -1,0 +1,42 @@
+@-moz-document url("about:home"), url("about:newtab"), url-prefix("about:preferences") {
+  @media (prefers-color-scheme: light) {
+    :root {
+      color-scheme: light !important;
+      --newtab-background-color: #f3f6f4 !important;
+      --newtab-background-color-secondary: #ffffff !important;
+      --newtab-text-primary-color: #14251f !important;
+      --newtab-text-secondary-color: #405b50 !important;
+      --newtab-element-hover-color: #e5ece8 !important;
+      --newtab-border-color: #9eafa7 !important;
+      --newtab-primary-action-background: #006b46 !important;
+    }
+
+    html,
+    body {
+      color: #14251f !important;
+      background-color: #f3f6f4 !important;
+    }
+
+    .search-wrapper input,
+    .search-handoff-button,
+    .search-handoff-button:hover,
+    .search-handoff-button:active {
+      color: #14251f !important;
+      background: #ffffff !important;
+      border-color: #9eafa7 !important;
+      box-shadow: none !important;
+    }
+
+    .search-wrapper input:focus,
+    .search-handoff-button:focus-visible {
+      border-color: #006b46 !important;
+      box-shadow: 0 0 0 1px #006b46 !important;
+    }
+
+    .search-handoff-button .fake-textbox,
+    .search-handoff-button .fake-caret {
+      color: #14251f !important;
+      caret-color: #006b46 !important;
+    }
+  }
+}
