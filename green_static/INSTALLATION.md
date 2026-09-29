@@ -4,7 +4,7 @@
 
 Provide Hyprland with Lua configuration support, awww/awww-daemon, hypridle,
 hyprlock, hyprsunset, Waybar, Kitty, Dunst, Wofi, wf-recorder, Dolphin, jq,
-Python 3, grim, slurp, Satty, wl-clipboard, brightnessctl, playerctl,
+Python 3, ImageMagick (magick), grim, slurp, Satty, wl-clipboard, brightnessctl, playerctl,
 pavucontrol, libnotify, util-linux (flock), and GNU coreutils/findutils.
 KDE palette updates use `kwriteconfig6`; desktop appearance uses `gsettings`.
 Install BlexMono Nerd Font Mono and JetBrains Mono. GTK settings expect Breeze
@@ -130,4 +130,28 @@ forced appearance settings may also need to be set to follow the system.
 
 The light variant uses parchment backgrounds and brown ink. Select the `sepia`
 accent for bronze/brown highlights (`toggle-theme.sh accent sepia`). Kitty retains
-90% opacity. Neovim reads both appearance and accent when it starts.
+80% background opacity. Neovim reads both appearance and accent when it starts.
+
+
+### Warcraft variant
+
+The optional Warcraft variant uses the light parchment palette with bronze and
+muted blue accents. Nine original Warcraft III score-screen illustrations are
+included in `wallpapers/warcraft-ingame`, with their source links. The wallpaper
+renderer composites the original transparency onto parchment at the bottom right,
+with no right padding, sized to 65% of screen height (capped at half its width). It sizes the canvas for each monitor and
+caches the result under `~/.cache/green-static/wallpapers`. Source PNGs stay intact.
+The installer copies this collection automatically with the other wallpapers.
+
+Use **Super+Space → warcraft** or:
+
+```sh
+~/.config/green-static/toggle-theme.sh preset warcraft
+```
+
+Use **Super+Space → parchment** (or `preset parchment`) to restore the sepia
+palette and earlier sketch collection. **Super+Shift+B** cycles accents including
+Warcraft; this only changes colors. **Super+M / Super+N** cycle illustrations.
+Light Kitty background opacity is 0.80; focused/unfocused window opacity is
+0.94/0.88, and bar/launcher backgrounds use 0.82. Existing Neovim sessions need a restart to pick
+up new accent colors.

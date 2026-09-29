@@ -9,7 +9,9 @@ choice=$(printf '%s\n' \
   'run         execute command' \
   'workspace   switch window / workspace' \
   'worktree    open project worktree' \
-  'accent      cycle green / amber / violet / cyan / sepia' \
+  'accent      cycle green / amber / violet / cyan / sepia / warcraft' \
+  'warcraft    parchment / bronze / blue / game drawings' \
+  'parchment   sepia / original sketch collection' \
   'light       full light desktop' \
   'dark        full dark desktop' \
   'wallpaper   select collection' \
@@ -23,6 +25,7 @@ case "${choice%% *}" in
   workspace) exec "$hypr_dir/workspace-overview.sh" ;;
   worktree) exec "$hypr_dir/open-worktree.sh" ;;
   accent) exec "$theme" accent cycle ;;
+  warcraft|parchment) exec "$theme" preset "${choice%% *}" ;;
   light|dark) exec "$theme" set "${choice%% *}" ;;
   capture) exec "$HOME/.local/bin/screenshot" ;;
   window) exec "$hypr_dir/window-screenshot.sh" ;;

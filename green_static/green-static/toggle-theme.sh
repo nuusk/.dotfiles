@@ -26,7 +26,7 @@ read_mode() {
 read_accent() {
     local accent=green
     if [[ -r "$state_dir/accent" ]]; then read -r accent < "$state_dir/accent" || true; fi
-    case "$accent" in green|amber|violet|cyan|sepia) printf '%s\n' "$accent" ;; *) printf 'green\n' ;; esac
+    case "$accent" in green|amber|violet|cyan|sepia|warcraft) printf '%s\n' "$accent" ;; *) printf 'green\n' ;; esac
 }
 
 print_status() {
@@ -193,14 +193,32 @@ case "$command" in
         if [[ "$accent" == cycle ]]; then
             case "$(read_accent)" in
                 green) accent=amber ;; amber) accent=violet ;;
-                violet) accent=cyan ;; cyan) accent=sepia ;; sepia) accent=green ;;
+                violet) accent=cyan ;; cyan) accent=sepia ;; sepia) accent=warcraft ;; warcraft) accent=green ;;
             esac
         fi
         case "$accent" in
-            green|amber|violet|cyan|sepia) ;;
-            *) echo 'Accent must be green, amber, violet, cyan, sepia, or cycle' >&2; exit 2 ;;
+            green|amber|violet|cyan|sepia|warcraft) ;;
+            *) echo 'Accent must be green, amber, violet, cyan, sepia, warcraft, or cycle' >&2; exit 2 ;;
         esac
         apply_mode "$(read_mode)" "$accent"
+        ;;
+    preset)
+        preset="${2:-}"
+        case "$preset" in
+            warcraft) accent=warcraft; collection=warcraft-ingame ;;
+            parchment) accent=sepia; collection=warcraft-sketches ;;
+            *) echo 'Preset must be warcraft or parchment' >&2; exit 2 ;;
+        esac
+        [[ -d "$HOME/code/backgrounds/cycling/$collection" ]] || {
+            echo "Missing wallpaper collection: $collection" >&2; exit 1;
+        }
+        exec 9> "$lock_file"
+        flock 9
+        apply_mode light "$accent"
+        sed -i "s/^collection=.*/collection=$collection/" "$config_root/hypr/wallpaper.conf"
+        if [[ "${GREEN_STATIC_SKIP_LIVE_RELOAD:-0}" != 1 ]]; then
+            "$config_root/hypr/awww_cycle_once.sh" next
+        fi
         ;;
     toggle)
         exec 9> "$lock_file"
@@ -226,7 +244,7 @@ case "$command" in
         apply_mode "$command"
         ;;
     *)
-        printf 'Usage: %s {status|toggle|set dark|set light}\n' "$0" >&2
+        printf 'Usage: %s {status|toggle|set dark|set light|accent NAME|preset warcraft|preset parchment}\n' "$0" >&2
         exit 2
         ;;
 esac

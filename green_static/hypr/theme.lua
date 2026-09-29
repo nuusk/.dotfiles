@@ -33,8 +33,8 @@ local themes = {
         },
         inactive_border = "rgba(a88d68dd)",
         shadow = "rgba(3f302424)",
-        active_opacity = 1.0,
-        inactive_opacity = 1.0,
+        active_opacity = 0.94,
+        inactive_opacity = 0.88,
     },
 }
 

@@ -34,6 +34,7 @@ if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
 fi
 
 resize=crop
+layout=default
 fill_color=000000
 collection_display="$(dirname -- "$wallpaper")/display.conf"
 if [[ -r "$collection_display" ]]; then source "$collection_display"; fi
@@ -42,31 +43,28 @@ case "$resize" in crop|fit|no|stretch) ;; *) resize=crop ;; esac
 
 printf '%s\n' "$wallpaper" > "$state_file"
 
-outputs="$(hyprctl -j monitors 2>/dev/null | jq -r '.[].name' | paste -sd, -)"
-
-if [ -n "$outputs" ]; then
-  awww img "$wallpaper" \
-    --outputs "$outputs" \
-    --transition-type "$transition_type" \
-    --transition-duration "$transition_duration" \
-    --transition-fps "$transition_fps" \
-    --transition-step "$transition_step" \
-    --transition-angle "$transition_angle" \
-    --transition-wave "$transition_wave" \
-    --transition-bezier "$transition_bezier" \
-    --resize "$resize" \
-    --fill-color "$fill_color" \
-    --filter Lanczos3
+transition_args=(
+  --transition-type "$transition_type"
+  --transition-duration "$transition_duration"
+  --transition-fps "$transition_fps"
+  --transition-step "$transition_step"
+  --transition-angle "$transition_angle"
+  --transition-wave "$transition_wave"
+  --transition-bezier "$transition_bezier"
+)
+monitors="$(hyprctl -j monitors)"
+if [[ "$layout" == corner ]]; then
+  renderer="$(dirname -- "${BASH_SOURCE[0]}")/awww_render_corner.sh"
+  while IFS=$'\t' read -r output width height transform; do
+    # Rotated monitors need their physical canvas dimensions exchanged.
+    if (( transform % 2 )); then swap="$width"; width="$height"; height="$swap"; fi
+    canvas=$("$renderer" "$wallpaper" "$width" "$height" "${fill_color:0:6}")
+    awww img "$canvas" --outputs "$output" "${transition_args[@]}" --resize no
+  done < <(jq -r '.[] | [.name, .width, .height, (.transform // 0)] | @tsv' <<< "$monitors")
 else
-  awww img "$wallpaper" \
-    --transition-type "$transition_type" \
-    --transition-duration "$transition_duration" \
-    --transition-fps "$transition_fps" \
-    --transition-step "$transition_step" \
-    --transition-angle "$transition_angle" \
-    --transition-wave "$transition_wave" \
-    --transition-bezier "$transition_bezier" \
-    --resize "$resize" \
-    --fill-color "$fill_color" \
-    --filter Lanczos3
+  outputs=$(jq -r '.[].name' <<< "$monitors" | paste -sd, -)
+  output_args=()
+  [[ -n "$outputs" ]] && output_args=(--outputs "$outputs")
+  awww img "$wallpaper" "${output_args[@]}" "${transition_args[@]}" \
+    --resize "$resize" --fill-color "$fill_color" --filter Lanczos3
 fi

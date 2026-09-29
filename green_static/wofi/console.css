@@ -24,7 +24,7 @@
     caret-color: @primary;
 }
 
-#scroll, #inner-box { background-color: @window-bg; }
+#scroll, #inner-box { background-color: transparent; }
 
 #entry {
     padding: 5px 8px;

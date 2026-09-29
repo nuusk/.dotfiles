@@ -9,7 +9,7 @@
 @define-color red #a92d32;
 @define-color yellow #725500;
 @define-color border #baa17d;
-@define-color bar-bg #f0e6d2;
+@define-color bar-bg rgba(240, 230, 210, 0.82);
 @define-color border-soft #baa17d;
 @define-color primary-soft #e8d6b6;
 @define-color accent-soft #e9dcc5;
