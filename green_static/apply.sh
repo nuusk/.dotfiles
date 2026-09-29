@@ -40,6 +40,11 @@ copy_file() {
 copy_tree() {
   local source="$1" target="$2" file
   while IFS= read -r -d '' file; do
+    # Hyprland watches its config. Install entrypoints only after all their
+    # dependencies exist, so an automatic reload cannot see a partial install.
+    case "$file" in
+      "$bundle_root/hypr/hyprland.lua"|"$bundle_root/hypr/hyprland.conf") continue ;;
+    esac
     copy_file "$file" "$target/${file#"$source/"}"
   done < <(find "$source" -type f -print0)
 }
@@ -87,5 +92,8 @@ if [[ -f "$target_home/.mozilla/firefox/profiles.ini" ]]; then
   done < <(awk -F= '/^Path=/{sub(/\r$/, "", $2); print $2}' "$target_home/.mozilla/firefox/profiles.ini")
 fi
 
+copy_file "$bundle_root/hypr/hyprland.conf" "$target_home/.config/hypr/hyprland.conf"
+copy_file "$bundle_root/hypr/hyprland.lua" "$target_home/.config/hypr/hyprland.lua"
+
 printf 'Green Static installed in %s\nBackups of replaced files: %s\n' "$target_home" "$backup_root"
-printf '%s\n' 'No running applications were reloaded. See INSTALLATION.md for activation and checks.'
+printf '%s\n' 'No explicit application reloads were requested; Hyprland may reload automatically. See INSTALLATION.md for activation and checks.'

@@ -24,6 +24,9 @@ Have `~/.local/bin` on PATH. Existing managed files are backed up under
 `~/.local/state/green-static/backups/<timestamp>-<pid>/`, preserving their
 relative paths. Restore selected files from that directory if needed.
 Unrelated files are retained. Reapplying resets managed theme files to dark.
+Hyprland entrypoints are installed last, after their theme and helper files,
+because an active session may automatically reload when its config changes.
+The installer does not explicitly reload applications.
 
 Detected Firefox profiles inside the target home receive the chrome styles.
 Theme preferences are appended to `user.js`, preserving other preferences.
@@ -65,6 +68,10 @@ Start Waybar and the awww scripts if they are not running. Reopen Kitty, Wofi,
 and Dolphin, and restart Firefox. Monitor positions are automatic by default;
 adjust `~/.config/hypr/hyprland.lua` for your displays before activating.
 The legacy `hyprland.conf` is retained as an alternative.
+
+If an older installer triggered emergency mode with `module 'theme' not found`,
+run `hyprctl reload` after installation finishes. Check `hyprctl configerrors`;
+empty output means the configuration loaded successfully.
 
 Change themes with Waybar or:
 
