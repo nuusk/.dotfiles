@@ -9,7 +9,7 @@
 
     "modules-left": ["custom/logo", "hyprland/workspaces", "custom/special-workspace", "hyprland/window"],
     "modules-center": [],
-    "modules-right": ["battery", "cpu", "memory", "network", "wireplumber", "bluetooth", "hyprland/language", "idle_inhibitor", "custom/dunst", "custom/mic-mute", "custom/recording", "clock", "tray"],
+    "modules-right": ["battery", "cpu", "memory", "network", "wireplumber", "bluetooth", "hyprland/language", "idle_inhibitor", "custom/theme", "custom/dunst", "custom/mic-mute", "custom/recording", "clock", "tray"],
 
     "custom/logo": {
         "format": "[MIPHA]",
@@ -25,7 +25,7 @@
 
     "custom/special-workspace": {
         "format": "{}",
-        "exec": "/home/nuus/.config/waybar/special_workspace.sh",
+        "exec": "~/.config/waybar/special_workspace.sh",
         "return-type": "json",
         "tooltip": true
     },
@@ -47,9 +47,18 @@
         "exec-on-event": true
     },
 
+    "custom/theme": {
+        "format": "{}",
+        "exec": "~/.config/green-static/toggle-theme.sh status",
+        "return-type": "json",
+        "interval": 2,
+        "on-click": "~/.config/green-static/toggle-theme.sh toggle",
+        "exec-on-event": true
+    },
+
     "custom/recording": {
         "format": "{}",
-        "exec": "/home/nuus/.config/waybar/recording_status.sh",
+        "exec": "~/.config/waybar/recording_status.sh",
         "return-type": "json",
         "interval": 1,
         "tooltip": true
@@ -57,7 +66,7 @@
 
     "custom/mic-mute": {
         "format": "{}",
-        "exec": "/home/nuus/.config/waybar/mic_status.sh",
+        "exec": "~/.config/waybar/mic_status.sh",
         "return-type": "json",
         "interval": 1,
         "tooltip": true
@@ -69,18 +78,18 @@
     },
 
     "cpu": {
-        "format": "<span color='#5ea488'>CPU</span> <b>{usage}%</b>",
+        "format": "<span alpha='75%'>CPU</span> <b>{usage}%</b>",
         "interval": 2
     },
 
     "memory": {
         "interval": 5,
-        "format": "<span color='#5ea488'>MEM</span> <b>{used:0.1f}G</b>"
+        "format": "<span alpha='75%'>MEM</span> <b>{used:0.1f}G</b>"
     },
 
     "wireplumber": {
-        "format": "<span color='#5ea488'>VOL</span> {volume}%",
-        "format-muted": "<span color='#5ea488'>VOL</span> MUTE",
+        "format": "<span alpha='75%'>VOL</span> {volume}%",
+        "format-muted": "<span alpha='75%'>VOL</span> MUTE",
         "max-volume": 100,
         "scroll-step": 5,
         "on-click": "pavucontrol"
@@ -89,10 +98,10 @@
     "battery": {
         "bat": "BAT0",
         "interval": 30,
-        "format": "<span color='#5ea488'>BAT</span> {capacity}%",
-        "format-charging": "<span color='#00ff80'><b>[CHARGING]</b></span> {capacity}%",
-        "format-full": "<span color='#00ff80'><b>[CHARGED]</b></span>",
-        "format-plugged": "<span color='#5ea488'>BAT</span> AC",
+        "format": "<span alpha='75%'>BAT</span> {capacity}%",
+        "format-charging": "<b>[CHARGING]</b> {capacity}%",
+        "format-full": "<b>[CHARGED]</b>",
+        "format-plugged": "<span alpha='75%'>BAT</span> AC",
         "states": {
             "warning": 25,
             "critical": 10
@@ -100,9 +109,9 @@
     },
 
     "network": {
-        "format-wifi": "<span color='#5ea488'>NET</span> ↑{bandwidthUpBits} ↓{bandwidthDownBits}",
-        "format-ethernet": "<span color='#5ea488'>NET</span> ↑{bandwidthUpBits} ↓{bandwidthDownBits}",
-        "format-disconnected": "<span color='#5ea488'>NET</span> --",
+        "format-wifi": "<span alpha='75%'>NET</span> ↑{bandwidthUpBits} ↓{bandwidthDownBits}",
+        "format-ethernet": "<span alpha='75%'>NET</span> ↑{bandwidthUpBits} ↓{bandwidthDownBits}",
+        "format-disconnected": "<span alpha='75%'>NET</span> --",
         "interval": 2,
         "tooltip-format-wifi": "{essid} ({signalStrength}%)",
         "tooltip-format-ethernet": "{ifname}",
@@ -110,16 +119,16 @@
     },
 
     "bluetooth": {
-        "format": "<span color='#5ea488'>BT</span>",
-        "format-disabled": "<span color='#5ea488'>BT</span> OFF",
-        "format-connected": "<span color='#5ea488'>BT</span> ON",
+        "format": "<span alpha='75%'>BT</span>",
+        "format-disabled": "<span alpha='75%'>BT</span> OFF",
+        "format-connected": "<span alpha='75%'>BT</span> ON",
         "tooltip-format": "{controller_alias}\t{controller_address}",
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}"
     },
 
     "hyprland/language": {
-        "format": "<span color='#5ea488'>KB</span> {short}"
+        "format": "<span alpha='75%'>KB</span> {short}"
     },
 
     "tray": {
@@ -128,7 +137,7 @@
     },
 
     "idle_inhibitor": {
-        "format": "<span color='#5ea488'>IDLE</span> {icon}",
+        "format": "<span alpha='75%'>IDLE</span> {icon}",
         "format-icons": {
             "activated": "ON",
             "deactivated": "OFF"

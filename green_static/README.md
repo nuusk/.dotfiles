@@ -1,69 +1,37 @@
 # Green Static
 
-Green Static is a terminal-first Hyprland theme built around phosphor green on a void-black background.
+A portable Hyprland desktop with phosphor-green dark colors, a high-contrast
+light alternative, compact monospace chrome, and short launcher shader pulses.
 
-The look is intentionally tighter and less "UI-card" than the original cyberpunk pass:
+The Waybar sun/moon control switches Hyprland, Kitty, Waybar, Wofi, Dunst, GTK,
+KDE, and Firefox's desktop appearance preference together. Dark is the default.
 
-- deep black-blue backgrounds: `#0a0e17`
-- phosphor foreground: `#80ffcc`
-- primary active accent: `#00ff80`
-- secondary cyan accent: `#00e5ff`
-- subtle border green: `#0d3326`
-- small radii, thin borders, compact spacing
-- monospace system chrome
-- snappy compositor motion
-- short full-screen glitch pulses for `kitty` and `wofi`
+## Install
 
-## Character
-
-This theme is closer to a cyberdeck / greenscreen terminal than a glossy neon dashboard.
-
-- Waybar reads like a terminal HUD
-- Dunst reads like a small terminal alert panel
-- Wofi reads like a focused command palette
-- Hyprland borders provide the most visible animated accent
-- Neovim and Firefox inherit the same palette so the desktop stays coherent
-
-## Included Components
-
-- `hypr/`
-  Hyprland config, wallpaper, `awww` wallpaper scripts, screenshot integration, launcher pulse script, shaders, Hypridle, and Hyprlock files.
-- `waybar/`
-  Main bar config, CSS, and helper scripts for special-workspace / recording indicators.
-- `dolphin/`
-  Dolphin-specific config snapshot, QSS override, and wrapper script.
-- `kde/`
-  KDE globals and the `GreenStatic.colors` color-scheme file used by Dolphin.
-- `kitty/`
-  Terminal theme.
-- `dunst/`
-  Notification theme.
-- `wofi/`
-  Launcher config and styling.
-- `satty/`
-  Screenshot annotation config with persistent Wayland clipboard support through `wl-copy`.
-- `gtk-3.0/` and `gtk-4.0/`
-  GTK colors, settings, and window decoration assets.
-- `nvim/`
-  Neovim palette override.
-- `firefox/`
-  Profile-agnostic `userChrome.css` copy.
-- `helpers/`
-  External helper scripts that are installed into `~/.local/bin` by `apply.sh`.
-
-## Apply
-
-Preferred install path:
-
-```bash
-cd ~/code/.dotfiles/green_static
+```sh
 ./apply.sh
+# Also install optional workstation settings:
+./apply.sh --with-extras
 ```
 
-`apply.sh` copies the profile into the current user's home, rewrites bundled `/home/nuus/...` paths to the target home directory, installs helper scripts into `~/.local/bin`, configures Satty, and updates all detected Firefox profiles.
+Existing files are backed up under `~/.local/state/green-static/backups/`.
+The installer copies files without reloading running applications.
+See [INSTALLATION.md](INSTALLATION.md) for dependencies, activation, and checks.
 
-## Notes
+## Included
 
-- The bundle is stored in the dotfiles repo at `~/code/.dotfiles/green_static`.
-- Firefox styling is applied through both `userChrome.css` and `userContent.css`.
-- See `INSTALLATION.md` for package prerequisites and post-apply reload steps.
+- Hyprland Lua config and legacy config, idle/lock settings, recording,
+  workspace overview, worktree launcher, shaders, and screenshot helpers.
+- Waybar, Kitty, Wofi, Dunst, GTK, Dolphin/KDE, Satty, Neovim colors, and Firefox.
+- `green-static/`: light/dark palettes and the theme-switching script.
+- `wallpapers/`: EarthBound, Zelda, and FF7 collections. Select a collection and
+  interval in `~/.config/hypr/wallpaper.conf`; default: EarthBound, 30 minutes.
+- `extras/`: optional fi application settings, Neovim behavior tweaks, shell
+  worktree/session helpers, Windows 95 Kitty palettes, and a Ghibli background.
+
+Use `Super+A` for a region screenshot and `Super+Shift+A` for a window screenshot.
+`Super+D` opens Wofi. `Super+Tab` opens the workspace overview. `Super+T` opens
+worktree selection; set `WORKTREE_REPO` and `WORKTREE_ROOT` for your repository.
+
+The portable monitor layout uses automatic placement. Customize it on each
+machine; workstation snapshots retain their own geometry.

@@ -4,7 +4,7 @@ set -euo pipefail
 lock_dir="${XDG_RUNTIME_DIR:-/tmp}/green_static"
 lock_file="$lock_dir/awww_monitor_listener.lock"
 socket="${XDG_RUNTIME_DIR}/hypr/${HYPRLAND_INSTANCE_SIGNATURE}/.socket2.sock"
-setter="/home/nuus/.config/hypr/awww_set_wallpaper.sh"
+setter="$HOME/.config/hypr/awww_set_wallpaper.sh"
 
 mkdir -p "$lock_dir"
 exec 9>"$lock_file"

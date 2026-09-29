@@ -100,8 +100,13 @@ After theme changes, validate at least the following:
 
 ## Portability Notes
 
-The bundle contains absolute `/home/nuus/...` paths because it was captured from a live profile.
+Use `$HOME` in shell scripts, `os.getenv("HOME")` in Lua, tilde paths in
+Hyprland config, and relative imports in CSS. Do not add personal home paths.
+The installer supports `--target-home` for isolated validation and backs up
+replaced files. Keep machine-specific monitor layouts in workstation snapshots;
+the portable bundle uses automatic output placement.
 
-`apply.sh` is responsible for rewriting those to the target `$HOME` during install.
-
-If new files are added that contain home-directory paths, update `apply.sh` so those paths are rewritten too.
+The dark palette retains the original identity above. The light palette is an
+intentional high-contrast alternative selected through the Waybar theme control.
+Fi-specific application settings and shell/editor behavior belong in `extras/`
+and are installed only with `--with-extras`.

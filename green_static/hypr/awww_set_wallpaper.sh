@@ -20,8 +20,13 @@ transition_bezier="${AWWW_TRANSITION_BEZIER:-0.92,0.00,0.10,1.00}"
 
 mkdir -p "$state_dir"
 
-if [ -z "$wallpaper" ] && [ -f "$state_file" ]; then
-  wallpaper=$(<"$state_file")
+if [ -z "$wallpaper" ]; then
+  source "$HOME/.config/hypr/awww_collection.sh"
+  load_wallpaper_config
+  if [ -f "$state_file" ]; then
+    wallpaper=$(<"$state_file")
+  fi
+  wallpaper="$(pick_wallpaper "$wallpaper")" || wallpaper="$fallback_wallpaper"
 fi
 
 if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then

@@ -20,7 +20,6 @@
     font = BlexMono Nerd Font Mono 11
     line_height = 2
     markup = full
-    format = "<span foreground='#00ff80'><b>%s</b></span>\n<span foreground='#80ffcc'>%b</span>"
     alignment = left
     vertical_alignment = center
     show_age_threshold = 30
@@ -32,6 +31,8 @@
     mouse_left_click = close_current
     mouse_middle_click = do_action
     mouse_right_click = close_all
+
+    format = "<span foreground='#00ff80'><b>%s</b></span>\n<span foreground='#80ffcc'>%b</span>"
 
 [urgency_low]
     background = "#0a0e17"

@@ -1,96 +1,91 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-SRC_HOME="/home/nuus"
+bundle_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+target_home="$HOME"
+with_extras=0
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --target-home)
+      [[ $# -ge 2 && $2 == /* ]] || { echo '--target-home requires an absolute path' >&2; exit 2; }
+      target_home="$2"
+      shift 2
+      ;;
+    --with-extras) with_extras=1; shift ;;
+    --help)
+      echo 'Usage: ./apply.sh [--target-home /absolute/path] [--with-extras]'
+      exit 0
+      ;;
+    *) echo "Unknown option: $1" >&2; exit 2 ;;
+  esac
+done
 
-copy_text() {
-  local src="$1"
-  local dst="$2"
-  mkdir -p "$(dirname "$dst")"
-  cp "$src" "$dst"
-  sed -i "s|$SRC_HOME|$HOME|g" "$dst"
-}
+backup_root="$target_home/.local/state/green-static/backups/$(date +%Y%m%d-%H%M%S)-$$"
 
-copy_exec() {
-  local src="$1"
-  local dst="$2"
-  copy_text "$src" "$dst"
-  chmod +x "$dst"
-}
-
-copy_raw() {
-  local src="$1"
-  local dst="$2"
-  mkdir -p "$(dirname "$dst")"
-  cp "$src" "$dst"
+copy_file() {
+  local source="$1" target="$2"
+  if [[ -e "$target" || -L "$target" ]]; then
+    local backup="$backup_root/${target#"$target_home/"}"
+    mkdir -p "$(dirname "$backup")"
+    cp -a -- "$target" "$backup"
+  fi
+  mkdir -p "$(dirname "$target")"
+  # Replace symlinks rather than writing through them into another checkout.
+  local temporary
+  temporary=$(mktemp "${target}.XXXXXX")
+  cp -p -- "$source" "$temporary"
+  mv -f -- "$temporary" "$target"
 }
 
 copy_tree() {
-  local src_dir="$1"
-  local dst_dir="$2"
-  mkdir -p "$dst_dir"
-  cp -r "$src_dir"/. "$dst_dir"/
+  local source="$1" target="$2" file
+  while IFS= read -r -d '' file; do
+    copy_file "$file" "$target/${file#"$source/"}"
+  done < <(find "$source" -type f -print0)
 }
 
-echo "Applying green_static from: $ROOT"
+for component in hypr waybar kitty dunst wofi gtk-3.0 gtk-4.0 satty nvim green-static; do
+  copy_tree "$bundle_root/$component" "$target_home/.config/$component"
+done
+copy_tree "$bundle_root/wallpapers" "$target_home/code/backgrounds/cycling"
+copy_file "$bundle_root/dolphin/dolphinrc" "$target_home/.config/dolphinrc"
+copy_file "$bundle_root/dolphin/green_static.qss" "$target_home/.config/dolphin-green_static.qss"
+copy_file "$bundle_root/dolphin/dolphin-wrapper.sh" "$target_home/.local/bin/dolphin"
+copy_file "$bundle_root/kde/kdeglobals" "$target_home/.config/kdeglobals"
+copy_tree "$bundle_root/kde/color-schemes" "$target_home/.local/share/color-schemes"
+copy_file "$bundle_root/green-static/themes/light/GreenStaticLight.colors" "$target_home/.local/share/color-schemes/GreenStaticLight.colors"
+copy_file "$bundle_root/helpers/dunst_toggle.sh" "$target_home/.local/bin/dunst_toggle"
+copy_file "$bundle_root/helpers/screenshot.sh" "$target_home/.local/bin/screenshot"
+chmod +x "$target_home/.local/bin/"{dolphin,dunst_toggle,screenshot}
 
-copy_text "$ROOT/hypr/hyprland.conf" "$HOME/.config/hypr/hyprland.conf"
-copy_text "$ROOT/hypr/hypridle.conf" "$HOME/.config/hypr/hypridle.conf"
-copy_text "$ROOT/hypr/hyprlock.conf" "$HOME/.config/hypr/hyprlock.conf"
-copy_exec "$ROOT/hypr/glitch-launch.sh" "$HOME/.config/hypr/glitch-launch.sh"
-copy_exec "$ROOT/hypr/toggle-record.sh" "$HOME/.config/hypr/toggle-record.sh"
-copy_exec "$ROOT/hypr/awww_start.sh" "$HOME/.config/hypr/awww_start.sh"
-copy_exec "$ROOT/hypr/awww_cycle_once.sh" "$HOME/.config/hypr/awww_cycle_once.sh"
-copy_exec "$ROOT/hypr/awww_cycle.sh" "$HOME/.config/hypr/awww_cycle.sh"
-copy_exec "$ROOT/hypr/awww_monitor_listener.sh" "$HOME/.config/hypr/awww_monitor_listener.sh"
-copy_exec "$ROOT/hypr/awww_set_wallpaper.sh" "$HOME/.config/hypr/awww_set_wallpaper.sh"
-copy_exec "$ROOT/hypr/crt_cycle.sh" "$HOME/.config/hypr/crt_cycle.sh"
-copy_exec "$ROOT/hypr/toggle-crt.sh" "$HOME/.config/hypr/toggle-crt.sh"
-copy_exec "$ROOT/hypr/window-screenshot.sh" "$HOME/.config/hypr/window-screenshot.sh"
-copy_tree "$ROOT/hypr/shaders" "$HOME/.config/hypr/shaders"
-copy_raw "$ROOT/hypr/wallpaper.jpg" "$HOME/.config/hypr/wallpaper.jpg"
-copy_tree "$ROOT/wallpapers/ff7" "$HOME/code/backgrounds/cycling/ff7"
-
-copy_text "$ROOT/waybar/config" "$HOME/.config/waybar/config"
-copy_text "$ROOT/waybar/style.css" "$HOME/.config/waybar/style.css"
-copy_exec "$ROOT/waybar/special_workspace.sh" "$HOME/.config/waybar/special_workspace.sh"
-copy_exec "$ROOT/waybar/recording_status.sh" "$HOME/.config/waybar/recording_status.sh"
-copy_exec "$ROOT/waybar/mic_status.sh" "$HOME/.config/waybar/mic_status.sh"
-
-copy_text "$ROOT/kitty/kitty.conf" "$HOME/.config/kitty/kitty.conf"
-copy_text "$ROOT/dunst/dunstrc" "$HOME/.config/dunst/dunstrc"
-copy_text "$ROOT/wofi/config" "$HOME/.config/wofi/config"
-copy_text "$ROOT/wofi/style.css" "$HOME/.config/wofi/style.css"
-copy_tree "$ROOT/gtk-3.0" "$HOME/.config/gtk-3.0"
-copy_tree "$ROOT/gtk-4.0" "$HOME/.config/gtk-4.0"
-copy_text "$ROOT/satty/config.toml" "$HOME/.config/satty/config.toml"
-
-copy_text "$ROOT/nvim/lua/plugins/theme.lua" "$HOME/.config/nvim/lua/plugins/theme.lua"
-
-copy_text "$ROOT/dolphin/dolphinrc" "$HOME/.config/dolphinrc"
-copy_text "$ROOT/dolphin/green_static.qss" "$HOME/.config/dolphin-green_static.qss"
-copy_exec "$ROOT/dolphin/dolphin-wrapper.sh" "$HOME/.local/bin/dolphin"
-
-copy_text "$ROOT/kde/kdeglobals" "$HOME/.config/kdeglobals"
-copy_raw "$ROOT/kde/color-schemes/GreenStatic.colors" "$HOME/.local/share/color-schemes/GreenStatic.colors"
-
-copy_exec "$ROOT/helpers/dunst_toggle.sh" "$HOME/.local/bin/dunst_toggle"
-copy_exec "$ROOT/helpers/screenshot.sh" "$HOME/.local/bin/screenshot"
-
-if [ -f "$HOME/.mozilla/firefox/profiles.ini" ]; then
-  while IFS= read -r profile_path; do
-    [ -z "$profile_path" ] && continue
-    case "$profile_path" in
-      /*) target="$profile_path" ;;
-      *) target="$HOME/.mozilla/firefox/$profile_path" ;;
-    esac
-    mkdir -p "$target/chrome"
-    copy_text "$ROOT/firefox/userChrome.css" "$target/chrome/userChrome.css"
-    copy_text "$ROOT/firefox/userContent.css" "$target/chrome/userContent.css"
-    copy_text "$ROOT/firefox/user.js" "$target/user.js"
-  done < <(awk -F= '/^Path=/{print $2}' "$HOME/.mozilla/firefox/profiles.ini")
+if [[ $with_extras == 1 ]]; then
+  copy_tree "$bundle_root/extras/config" "$target_home/.config"
+  copy_tree "$bundle_root/extras/background" "$target_home/code/backgrounds/cycling/ghibli"
 fi
 
-echo "green_static files copied."
-echo "Recommended follow-up: hyprctl reload && pkill waybar; waybar >/dev/null 2>&1 & && dunstctl reload ~/.config/dunst/dunstrc"
+if [[ -f "$target_home/.mozilla/firefox/profiles.ini" ]]; then
+  while IFS= read -r profile_path; do
+    [[ -n "$profile_path" ]] || continue
+    case "$profile_path" in
+      /*) target="$profile_path" ;;
+      *) target="$target_home/.mozilla/firefox/$profile_path" ;;
+    esac
+    # Only install profiles inside the requested home, including in staging mode.
+    if [[ "$(realpath -m "$target")" != "$(realpath -m "$target_home")/"* ]]; then
+      echo "Skipping Firefox profile outside target home: $target" >&2
+      continue
+    fi
+    copy_file "$bundle_root/firefox/userChrome.css" "$target/chrome/userChrome.css"
+    copy_file "$bundle_root/firefox/userContent.css" "$target/chrome/userContent.css"
+    # Preserve existing Firefox preferences; append the theme preferences last.
+    prefs=$(mktemp)
+    if [[ -f "$target/user.js" ]]; then cat "$target/user.js" > "$prefs"; fi
+    printf '\n' >> "$prefs"
+    cat "$bundle_root/firefox/user.js" >> "$prefs"
+    copy_file "$prefs" "$target/user.js"
+    rm -f "$prefs"
+  done < <(awk -F= '/^Path=/{sub(/\r$/, "", $2); print $2}' "$target_home/.mozilla/firefox/profiles.ini")
+fi
+
+printf 'Green Static installed in %s\nBackups of replaced files: %s\n' "$target_home" "$backup_root"
+printf '%s\n' 'No running applications were reloaded. See INSTALLATION.md for activation and checks.'

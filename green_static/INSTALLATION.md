@@ -1,201 +1,93 @@
 # Installation
 
-## Goal
+## Dependencies
 
-`green_static` is intended to be copyable to another machine and applied as a full profile bundle.
+Provide Hyprland with Lua configuration support, awww/awww-daemon, hypridle,
+hyprlock, hyprsunset, Waybar, Kitty, Dunst, Wofi, wf-recorder, Dolphin, jq,
+Python 3, grim, slurp, Satty, wl-clipboard, brightnessctl, playerctl,
+pavucontrol, libnotify, util-linux (flock), and GNU coreutils/findutils.
+KDE palette updates use `kwriteconfig6`; desktop appearance uses `gsettings`.
+Install BlexMono Nerd Font Mono and JetBrains Mono. GTK settings expect Breeze
+and its icons/cursors. Neovim integration expects an existing LazyVim setup.
+Firefox and Neovim are optional. Slack, Obsidian, 1Password, and Signal have
+special workspace shortcuts but are not installed by this bundle.
 
-Preferred install method:
+## Apply
 
-```bash
-cd ~/code/.dotfiles/green_static
+```sh
 ./apply.sh
 ```
 
-The script copies files into the correct locations under the current user's home directory and rewrites bundled `/home/nuus/...` paths automatically.
+The installer copies into `~/.config`, `~/.local/bin`,
+`~/.local/share/color-schemes`, and `~/code/backgrounds/cycling`.
+Have `~/.local/bin` on PATH. Existing managed files are backed up under
+`~/.local/state/green-static/backups/<timestamp>-<pid>/`, preserving their
+relative paths. Restore selected files from that directory if needed.
+Unrelated files are retained. Reapplying resets managed theme files to dark.
 
-## What The Bundle Covers
+Detected Firefox profiles inside the target home receive the chrome styles.
+Theme preferences are appended to `user.js`, preserving other preferences.
+Profiles outside that home are skipped; install their Firefox files manually.
 
-This bundle contains live config for:
+To inspect an installation without changing your session:
 
-- Dolphin
-- KDE color scheme / globals
-- Hyprland
-- Awww wallpaper daemon
-- Hypridle
-- Hyprlock
-- Waybar
-- Kitty
-- Dunst
-- Wofi
-- Satty
-- GTK 3
-- GTK 4
-- Neovim
-- Firefox `userChrome.css`, `userContent.css`, and `user.js`
-
-## Runtime Prerequisites
-
-Install or provide these before applying the theme:
-
-- `hyprland`
-- `awww`
-- `awww-daemon` (normally provided by the `awww` package)
-- `hypridle`
-- `hyprlock`
-- `hyprsunset`
-- `waybar`
-- `kitty`
-- `dunst`
-- `wofi`
-- `wf-recorder`
-- `dolphin`
-- `jq`
-- `python3`
-- `grim`
-- `slurp`
-- `satty`
-- `wl-clipboard`
-- `brightnessctl`
-- `playerctl`
-- `pavucontrol`
-- `libnotify` or another package that provides `notify-send`
-- `firefox` (optional, only for the bundled `userChrome.css`)
-- `neovim` (optional, only for the bundled theme override)
-
-## Optional App Integrations
-
-These are not required for the theme to apply, but the Hyprland config includes dedicated special-workspace treatment for them:
-
-- `slack`
-- `obsidian`
-- `signal-desktop`
-
-If they are not installed, the keybinds still exist, but `on-created-empty` will not be able to launch the apps automatically.
-
-## Font Prerequisites
-
-The current bundle expects these font families to exist:
-
-- `BlexMono Nerd Font Mono`
-- `JetBrains Mono`
-
-At minimum, install a Nerd Font package that provides `BlexMono Nerd Font Mono`, because Waybar, Dunst, and Wofi rely on it.
-
-## PATH Assumption
-
-The bundle installs helper commands into:
-
-- `~/.local/bin`
-
-Your session should have `~/.local/bin` on `PATH`.
-
-## Installed Helper Commands
-
-`apply.sh` installs these bundled helpers into `~/.local/bin`:
-
-- `dunst_toggle`
-- `screenshot`
-- `dolphin` (wrapper that applies the Dolphin-specific QSS)
-
-These commands are referenced by the live config after install.
-
-## Manual Apply (If You Do Not Use `apply.sh`)
-
-You can still copy files manually, but `apply.sh` is recommended because it rewrites absolute home-directory paths.
-
-If you apply manually, you must also update hardcoded `/home/nuus/...` paths in copied text files.
-
-Minimum manual copy set:
-
-```bash
-cp ~/code/.dotfiles/green_static/hypr/hyprland.conf ~/.config/hypr/hyprland.conf
-cp ~/code/.dotfiles/green_static/hypr/hypridle.conf ~/.config/hypr/hypridle.conf
-cp ~/code/.dotfiles/green_static/hypr/hyprlock.conf ~/.config/hypr/hyprlock.conf
-cp ~/code/.dotfiles/green_static/hypr/glitch-launch.sh ~/.config/hypr/glitch-launch.sh
-cp ~/code/.dotfiles/green_static/hypr/toggle-record.sh ~/.config/hypr/toggle-record.sh
-cp ~/code/.dotfiles/green_static/hypr/awww_start.sh ~/.config/hypr/awww_start.sh
-cp ~/code/.dotfiles/green_static/hypr/awww_cycle_once.sh ~/.config/hypr/awww_cycle_once.sh
-cp ~/code/.dotfiles/green_static/hypr/awww_cycle.sh ~/.config/hypr/awww_cycle.sh
-cp ~/code/.dotfiles/green_static/hypr/awww_monitor_listener.sh ~/.config/hypr/awww_monitor_listener.sh
-cp ~/code/.dotfiles/green_static/hypr/awww_set_wallpaper.sh ~/.config/hypr/awww_set_wallpaper.sh
-cp ~/code/.dotfiles/green_static/hypr/crt_cycle.sh ~/.config/hypr/crt_cycle.sh
-cp ~/code/.dotfiles/green_static/hypr/toggle-crt.sh ~/.config/hypr/toggle-crt.sh
-cp ~/code/.dotfiles/green_static/hypr/window-screenshot.sh ~/.config/hypr/window-screenshot.sh
-cp ~/code/.dotfiles/green_static/hypr/wallpaper.jpg ~/.config/hypr/wallpaper.jpg
-cp ~/code/.dotfiles/green_static/hypr/shaders/*.frag ~/.config/hypr/shaders/
-mkdir -p ~/code/backgrounds/cycling/ff7
-cp ~/code/.dotfiles/green_static/wallpapers/ff7/* ~/code/backgrounds/cycling/ff7/
-cp ~/code/.dotfiles/green_static/waybar/config ~/.config/waybar/config
-cp ~/code/.dotfiles/green_static/waybar/style.css ~/.config/waybar/style.css
-cp ~/code/.dotfiles/green_static/waybar/special_workspace.sh ~/.config/waybar/special_workspace.sh
-cp ~/code/.dotfiles/green_static/waybar/recording_status.sh ~/.config/waybar/recording_status.sh
-cp ~/code/.dotfiles/green_static/waybar/mic_status.sh ~/.config/waybar/mic_status.sh
-cp ~/code/.dotfiles/green_static/dolphin/dolphinrc ~/.config/dolphinrc
-cp ~/code/.dotfiles/green_static/dolphin/green_static.qss ~/.config/dolphin-green_static.qss
-mkdir -p ~/.local/bin
-cp ~/code/.dotfiles/green_static/dolphin/dolphin-wrapper.sh ~/.local/bin/dolphin
-cp ~/code/.dotfiles/green_static/kde/kdeglobals ~/.config/kdeglobals
-mkdir -p ~/.local/share/color-schemes
-cp ~/code/.dotfiles/green_static/kde/color-schemes/GreenStatic.colors ~/.local/share/color-schemes/GreenStatic.colors
-cp ~/code/.dotfiles/green_static/kitty/kitty.conf ~/.config/kitty/kitty.conf
-cp ~/code/.dotfiles/green_static/dunst/dunstrc ~/.config/dunst/dunstrc
-cp ~/code/.dotfiles/green_static/wofi/config ~/.config/wofi/config
-cp ~/code/.dotfiles/green_static/wofi/style.css ~/.config/wofi/style.css
-mkdir -p ~/.config/gtk-3.0 ~/.config/gtk-4.0 ~/.config/satty
-cp -r ~/code/.dotfiles/green_static/gtk-3.0/. ~/.config/gtk-3.0/
-cp -r ~/code/.dotfiles/green_static/gtk-4.0/. ~/.config/gtk-4.0/
-cp ~/code/.dotfiles/green_static/satty/config.toml ~/.config/satty/config.toml
-cp ~/code/.dotfiles/green_static/nvim/lua/plugins/theme.lua ~/.config/nvim/lua/plugins/theme.lua
+```sh
+./apply.sh --target-home /tmp/green-static-preview
 ```
 
-For Firefox, copy the bundled files into each profile’s `chrome/` directory:
+## Optional workstation extras
 
-```bash
-mkdir -p ~/.mozilla/firefox/<profile>/chrome
-cp ~/code/.dotfiles/green_static/firefox/userChrome.css ~/.mozilla/firefox/<profile>/chrome/userChrome.css
-cp ~/code/.dotfiles/green_static/firefox/userContent.css ~/.mozilla/firefox/<profile>/chrome/userContent.css
-cp ~/code/.dotfiles/green_static/firefox/user.js ~/.mozilla/firefox/<profile>/user.js
+```sh
+./apply.sh --with-extras
 ```
 
-## Post-Apply Reload
+This also installs Audacity settings (without recent-file paths), fontconfig,
+locale/KDE environment settings, xsettingsd and GTK 2 defaults, the Against the
+Storm keyd map, Windows 95 Kitty palettes, Bash worktree/session helpers, and
+Neovim completion/search/Python configuration. It includes the Ghibli wallpaper.
+See `extras/README.md` for behavior changes and manual activation. Extras may
+overwrite existing application settings; review them before selecting this flag.
 
-Run these after applying the bundle:
+## Activation
 
-```bash
+When migrating from the legacy Hyprland config to Lua, log out and back in;
+reloading an existing legacy session does not select the Lua entrypoint.
+For an already active Lua session:
+
+```sh
 hyprctl reload
-pkill waybar; waybar >/dev/null 2>&1 &
-dunstctl reload ~/.config/dunst/dunstrc
+pkill -SIGUSR2 -x waybar
+dunstctl reload
+~/.config/green-static/toggle-theme.sh set dark
 ```
 
-Then:
+Start Waybar and the awww scripts if they are not running. Reopen Kitty, Wofi,
+and Dolphin, and restart Firefox. Monitor positions are automatic by default;
+adjust `~/.config/hypr/hyprland.lua` for your displays before activating.
+The legacy `hyprland.conf` is retained as an alternative.
 
-- restart or re-open `dolphin` to apply the wrapper + QSS + KDE colors
-- reopen Wofi to pick up its CSS/config changes
-- open a new Kitty window to verify the shader pulse still works
-- verify `awww` is active by running `awww query`
-- restart Firefox to apply `userChrome.css` and `userContent.css`
-- restart Neovim or run `nvim --headless "+qa"` to validate the config
+Change themes with Waybar or:
 
-## Firefox Requirement
+```sh
+~/.config/green-static/toggle-theme.sh set light
+~/.config/green-static/toggle-theme.sh set dark
+```
 
-This bundle includes a `firefox/user.js` file that forces:
+Select `earthbound`, `zelda`, or `ff7` and an interval in seconds in
+`~/.config/hypr/wallpaper.conf`. Wallpaper helpers notice changes automatically.
 
-- `toolkit.legacyUserProfileCustomizations.stylesheets = true`
+## Verification
 
-Firefox must be fully restarted after adding or changing that file.
-
-## Validation Checklist
-
-After installation, verify at least:
-
-- `hyprctl reload` succeeds
+- `Hyprland --verify-config -c ~/.config/hypr/hyprland.lua`
 - `jq empty ~/.config/waybar/config`
-- `dunstctl reload ~/.config/dunst/dunstrc`
-- `awww query` shows `~/.config/hypr/wallpaper.jpg`
-- `Mod+R` starts/stops recording and Waybar shows `[REC]`
-- `Mod+A` opens a region screenshot in Satty
-- `Mod+D` opens a window screenshot in Satty
-- copied Satty images remain pasteable after Satty closes
-- `Mod+S`, `Mod+O`, and `Mod+Z` toggle Slack / Obsidian / Signal special workspaces
-- Wofi opens with screen dimming + glitch pulse
-- `nvim --headless "+qa"`
+- `awww query` and next/previous wallpaper shortcuts (`Super+M` / `Super+N`)
+- `Super+R` recording toggle and Waybar recording status
+- Region screenshot (`Super+A`) and window screenshot (`Super+Shift+A`)
+- Copy from Satty, close it, then paste the image
+- Open Kitty and Wofi; check shader pulses, dimming, and readability in both modes
+- `command -v dolphin` resolves to `~/.local/bin/dolphin`
+- `notify-send 'Green Static' 'Theme check'`
+- `nvim --headless '+qa'` in your configured Neovim installation
+
+An isolated installation verifies file placement and parsing; visual behavior,
+clipboard persistence, and application reloads still need a live session check.

@@ -1,103 +1,85 @@
-:root {
-    --gs-bg: #0a0e17;
-    --gs-bg-muted: #1a2332;
-    --gs-fg: #80ffcc;
-    --gs-dim: #5ea488;
-    --gs-primary: #00ff80;
-    --gs-accent: #00e5ff;
-    --gs-border: #0d3326;
-    --gs-primary-soft: rgba(0, 255, 128, 0.08);
-}
+/* Keep the installed Dark Space theme in dark mode, but neutralize it when
+ * the desktop advertises a light appearance. */
+@media not (-moz-system-dark-theme) {
+  :root {
+    color-scheme: light !important;
+    --lwt-accent-color: #e5ece8 !important;
+    --lwt-accent-color-inactive: #f3f6f4 !important;
+    --lwt-text-color: #14251f !important;
+    --toolbar-background-color: #f3f6f4 !important;
+    --toolbar-text-color: #14251f !important;
+    --toolbar-color-scheme: light !important;
+    --toolbar-field-background-color: #ffffff !important;
+    --toolbar-field-color: #14251f !important;
+    --toolbar-field-focus-background-color: #ffffff !important;
+    --toolbar-field-focus-color: #14251f !important;
+    --toolbar-field-border-color: #9eafa7 !important;
+    --toolbar-field-focus-border-color: #006b46 !important;
+    --toolbar-field-highlight: #d8eee3 !important;
+    --toolbar-field-highlight-text: #003d29 !important;
+    --tab-selected-bgcolor: #ffffff !important;
+    --tab-selected-textcolor: #14251f !important;
+    --tabs-navbar-separator-color: #9eafa7 !important;
+    --arrowpanel-background: #ffffff !important;
+    --arrowpanel-color: #14251f !important;
+    --arrowpanel-border-color: #9eafa7 !important;
+    --sidebar-background-color: #f3f6f4 !important;
+    --sidebar-text-color: #14251f !important;
+    --sidebar-border-color: #9eafa7 !important;
+    --chrome-content-separator-color: #9eafa7 !important;
+  }
 
-#navigator-toolbox,
-#TabsToolbar,
-#nav-bar,
-#PersonalToolbar,
-#sidebar-header,
-#sidebar-box,
-#titlebar,
-#tabbrowser-tabbox {
-    background: var(--gs-bg) !important;
-    color: var(--gs-fg) !important;
-}
+  #navigator-toolbox,
+  #TabsToolbar,
+  #nav-bar,
+  #PersonalToolbar {
+    color: #14251f !important;
+    background-color: #f3f6f4 !important;
+    background-image: none !important;
+  }
 
-#nav-bar {
-    border-top: 1px solid var(--gs-border) !important;
-    border-bottom: 1px solid var(--gs-border) !important;
-}
+  #urlbar,
+  #urlbar-background,
+  #urlbar-input-container,
+  #searchbar,
+  #searchbar .searchbar-textbox {
+    color: #14251f !important;
+    background-color: #ffffff !important;
+    background-image: none !important;
+    border-color: #9eafa7 !important;
+  }
 
-.tabbrowser-tab {
-    padding-inline: 0 !important;
-}
+  #urlbar-input,
+  #searchbar input {
+    color: #14251f !important;
+    background-color: transparent !important;
+    caret-color: #006b46 !important;
+  }
 
-.tab-background {
-    background: transparent !important;
-    border: none !important;
-    border-radius: 2px !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-}
+  #urlbar[open] > .urlbarView,
+  .urlbarView-body-inner {
+    color: #14251f !important;
+    background-color: #ffffff !important;
+    border-color: #9eafa7 !important;
+  }
 
-.tabbrowser-tab[selected] .tab-background,
-.tab-background[selected] {
-    background: var(--gs-primary-soft) !important;
-}
+  .urlbarView-row[selected] {
+    color: #003d29 !important;
+    background-color: #d8eee3 !important;
+  }
 
-.tab-label {
-    color: var(--gs-dim) !important;
-    font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", monospace !important;
-    font-size: 11px !important;
-}
+  #urlbar[focused] > #urlbar-background,
+  #searchbar:focus-within .searchbar-textbox {
+    border-color: #006b46 !important;
+    box-shadow: 0 0 0 1px #006b46 !important;
+  }
 
-.tabbrowser-tab[selected] .tab-label,
-.tab-background[selected] .tab-label {
-    color: var(--gs-primary) !important;
-    font-weight: 700 !important;
-}
+  .tabbrowser-tab[selected] .tab-background {
+    background-color: #ffffff !important;
+    box-shadow: inset 0 -2px #006b46 !important;
+  }
 
-#tabs-newtab-button,
-#new-tab-button,
-#alltabs-button,
-.tab-close-button,
-toolbar .toolbarbutton-1,
-#PanelUI-menu-button,
-#nav-bar-overflow-button,
-#firefox-view-button,
-#unified-extensions-button {
-    color: var(--gs-dim) !important;
-}
-
-#urlbar-background,
-#searchbar {
-    background: var(--gs-bg-muted) !important;
-    border: 1px solid var(--gs-border) !important;
-    border-radius: 2px !important;
-    box-shadow: none !important;
-}
-
-#urlbar[open] #urlbar-background,
-#urlbar[focused] #urlbar-background,
-#searchbar:focus-within {
-    border-color: var(--gs-primary) !important;
-}
-
-#urlbar-input,
-#searchbar,
-#searchbar .searchbar-textbox {
-    color: var(--gs-fg) !important;
-    font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", monospace !important;
-    font-size: 11px !important;
-}
-
-toolbarbutton.bookmark-item .toolbarbutton-text,
-#PersonalToolbar toolbarbutton {
-    color: var(--gs-dim) !important;
-    font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", monospace !important;
-    font-size: 10px !important;
-}
-
-#sidebar-header,
-#sidebar-box,
-#sidebar {
-    border-inline-end: 1px solid var(--gs-border) !important;
+  .tabbrowser-tab:not([selected]) {
+    color: #405b50 !important;
+  }
 }
