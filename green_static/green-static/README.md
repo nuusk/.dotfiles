@@ -14,3 +14,7 @@ Manual controls:
 ~/.config/green-static/toggle-theme.sh set light
 ~/.config/green-static/toggle-theme.sh set dark
 ```
+
+`Super+B` cycles green/amber/violet/cyan accents; `Super+Shift+B` opens Firefox.
+Use `toggle-theme.sh accent amber` to select an accent directly. Palettes live
+in `accents.json`; light/dark changes retain the selected accent.

@@ -23,6 +23,12 @@ read_mode() {
     esac
 }
 
+read_accent() {
+    local accent=green
+    if [[ -r "$state_dir/accent" ]]; then read -r accent < "$state_dir/accent" || true; fi
+    case "$accent" in green|amber|violet|cyan) printf '%s\n' "$accent" ;; *) printf 'green\n' ;; esac
+}
+
 print_status() {
     if [[ "$(read_mode)" == "light" ]]; then
         printf '{"text":"","alt":"light","class":"light","tooltip":"Light theme · click for dark"}\n'
@@ -124,6 +130,11 @@ apply_mode() {
     local mode="$1"
     local theme_dir="$source_root/$mode"
     local kde_palette
+    local accent="${2:-$(read_accent)}"
+    rendered_dir=$(mktemp -d)
+    trap 'rm -rf -- "$rendered_dir"' EXIT
+    python3 "$script_dir/render-accent.py" "$theme_dir" "$rendered_dir" "$mode" "$accent"
+    theme_dir="$rendered_dir"
 
     case "$mode" in
         dark) kde_palette="$theme_dir/GreenStatic.colors" ;;
@@ -153,12 +164,18 @@ apply_mode() {
     atomic_copy "$theme_dir/waybar.css" "$config_root/waybar/theme.css"
     atomic_copy "$theme_dir/kitty.conf" "$config_root/kitty/theme.conf"
     atomic_copy "$theme_dir/wofi.css" "$config_root/wofi/theme.css"
+    cat "$theme_dir/wofi.css" "$config_root/wofi/console.css" > "$theme_dir/wofi-style.css"
+    atomic_copy "$theme_dir/wofi-style.css" "$config_root/wofi/style.css"
     atomic_copy "$theme_dir/gtk.css" "$config_root/gtk-3.0/theme.css"
     atomic_copy "$theme_dir/gtk.css" "$config_root/gtk-4.0/theme.css"
     render_dunst_config "$theme_dir/dunst.conf"
     install_light_kde_scheme
     apply_kde_palette "$kde_palette"
+    atomic_copy "$theme_dir/accent.lua" "$config_root/hypr/accent.lua"
+    printf '%s\n' "$accent" > "$state_dir/accent"
     write_state "$mode"
+    rm -rf -- "$rendered_dir"
+    trap - EXIT
     reload_desktop "$mode"
 }
 
@@ -167,6 +184,22 @@ command="${1:-status}"
 case "$command" in
     status)
         print_status
+        ;;
+    accent)
+        exec 9> "$lock_file"
+        flock 9
+        accent="${2:-cycle}"
+        if [[ "$accent" == cycle ]]; then
+            case "$(read_accent)" in
+                green) accent=amber ;; amber) accent=violet ;;
+                violet) accent=cyan ;; cyan) accent=green ;;
+            esac
+        fi
+        case "$accent" in
+            green|amber|violet|cyan) ;;
+            *) echo 'Accent must be green, amber, violet, cyan, or cycle' >&2; exit 2 ;;
+        esac
+        apply_mode "$(read_mode)" "$accent"
         ;;
     toggle)
         exec 9> "$lock_file"

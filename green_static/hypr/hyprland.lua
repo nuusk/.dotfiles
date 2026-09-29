@@ -7,7 +7,7 @@ if not config_home or config_home == "" then
 end
 
 local hypr_dir = config_home .. "/hypr"
-local theme = require("theme")
+local theme = dofile(hypr_dir .. "/theme.lua")
 
 -- Portable default; customize output names and positions on the target machine.
 hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1.0 })
@@ -15,7 +15,7 @@ hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1.0 })
 -- Programs and scripts
 local terminal = hypr_dir .. "/glitch-launch.sh kitty"
 local file_manager = "dolphin"
-local menu = hypr_dir .. "/glitch-launch.sh --shader " .. hypr_dir .. "/shaders/wofi_glitch.frag wofi --show drun"
+local menu = hypr_dir .. "/glitch-launch.sh --shader " .. hypr_dir .. "/shaders/wofi_glitch.frag " .. config_home .. "/green-static/console.sh"
 local screenshot = assert(os.getenv("HOME")) .. "/.local/bin/screenshot"
 local wallpaper = hypr_dir .. "/awww_start.sh"
 local wallpaper_cycle = hypr_dir .. "/awww_cycle.sh"
@@ -165,7 +165,8 @@ hl.bind(main_mod .. " + TAB", hl.dsp.exec_cmd(workspace_overview))
 hl.bind(main_mod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(main_mod .. " + A", hl.dsp.exec_cmd(screenshot))
 hl.bind(main_mod .. " + SHIFT + A", hl.dsp.exec_cmd(hypr_dir .. "/window-screenshot.sh"))
-hl.bind(main_mod .. " + B", hl.dsp.exec_cmd(hypr_dir .. "/glitch-launch.sh firefox"))
+hl.bind(main_mod .. " + SHIFT + B", hl.dsp.exec_cmd(hypr_dir .. "/glitch-launch.sh firefox"))
+hl.bind(main_mod .. " + B", hl.dsp.exec_cmd(config_home .. "/green-static/toggle-theme.sh accent cycle"))
 hl.bind(main_mod .. " + T", hl.dsp.exec_cmd(open_worktree))
 hl.bind("CTRL + ALT + SHIFT + A", hl.dsp.exec_cmd(next_background))
 hl.bind("CTRL + ALT + SHIFT + B", hl.dsp.exec_cmd(toggle_crt))

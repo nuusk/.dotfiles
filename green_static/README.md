@@ -35,3 +35,26 @@ worktree selection; set `WORKTREE_REPO` and `WORKTREE_ROOT` for your repository.
 
 The portable monitor layout uses automatic placement. Customize it on each
 machine; workstation snapshots retain their own geometry.
+
+## Command console and accents
+
+`Super+D` or `Super+Space` opens the compact command console. It provides app
+launching, command execution, workspace/window selection, worktree selection,
+wallpaper collections, screenshots, and theme controls. The app and command
+entries open their respective Wofi search modes.
+
+`Super+B` cycles green, amber, violet, and cyan accents. Firefox moves to
+`Super+Shift+B`. Accent selection persists independently of light/dark mode.
+The accent updates launcher selection, Waybar highlights, terminal colors,
+notifications, GTK/KDE palette accents, and Hyprland borders. Base backgrounds
+and text colors retain the Green Static palette; Firefox's custom chrome
+continues to use its own light/dark styling.
+
+```sh
+~/.config/green-static/toggle-theme.sh accent amber
+~/.config/green-static/toggle-theme.sh accent cycle
+```
+
+Edit `green-static/accents.json` to adjust the four named palettes. Each has
+separate primary/secondary colors for dark and light mode. Reapply an accent
+after editing. Installations start with the green accent.

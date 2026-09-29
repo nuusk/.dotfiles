@@ -1,0 +1,6 @@
+{
+  "green": {"dark": ["00ff80", "00e5ff"], "light": ["006b46", "006477"]},
+  "amber": {"dark": ["ffb454", "ffd580"], "light": ["875000", "705400"]},
+  "violet": {"dark": ["c4a0ff", "edb0ff"], "light": ["7036a0", "8a337d"]},
+  "cyan": {"dark": ["45d9ef", "9feaff"], "light": ["006879", "005b82"]}
+}

@@ -38,4 +38,11 @@ local themes = {
     },
 }
 
+local accent_file = loadfile(config_home .. "/hypr/accent.lua")
+if accent_file then
+    local ok, colors = pcall(accent_file)
+    if ok and type(colors) == "table" then
+        themes[mode].active_border.colors = colors
+    end
+end
 return themes[mode]
