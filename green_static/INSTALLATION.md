@@ -89,6 +89,8 @@ Select `earthbound`, `zelda`, or `ff7` and an interval in seconds in
 - `jq empty ~/.config/waybar/config`
 - `awww query` and next/previous wallpaper shortcuts (`Super+M` / `Super+N`)
 - `Super+R` recording toggle and Waybar recording status
+- `Super+Q` force-kill confirmation (Cancel or Escape leaves the app running);
+  `Super+W` closes the focused window normally
 - Region screenshot (`Super+A`) and window screenshot (`Super+Shift+A`)
 - Copy from Satty, close it, then paste the image
 - Open Kitty and Wofi; check shader pulses, dimming, and readability in both modes
@@ -100,6 +102,11 @@ An isolated installation verifies file placement and parsing; visual behavior,
 clipboard persistence, and application reloads still need a live session check.
 
 ## Command console and accents
+
+`Super+Q` asks before force-killing the focused app, with Cancel selected by
+default. Confirming discards unsaved work and may close other windows belonging
+to the same app process. The original app remains the target if focus changes
+while the prompt is open. `Super+W` requests a normal window close.
 
 `Super+Space` opens the compact command console. It provides app
 launching, command execution, workspace/window selection, worktree selection,

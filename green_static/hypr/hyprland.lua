@@ -153,7 +153,7 @@ hl.device({
 local main_mod = "SUPER"
 
 hl.bind(main_mod .. " + RETURN", hl.dsp.exec_cmd(terminal))
-hl.bind(main_mod .. " + Q", hl.dsp.window.close())
+hl.bind(main_mod .. " + Q", hl.dsp.exec_cmd(hypr_dir .. "/force-kill.py"))
 hl.bind(main_mod .. " + W", hl.dsp.window.close())
 hl.bind(main_mod .. " + N", hl.dsp.exec_cmd(previous_background))
 hl.bind(main_mod .. " + M", hl.dsp.exec_cmd(next_background))
