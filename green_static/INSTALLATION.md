@@ -23,7 +23,7 @@ The installer copies into `~/.config`, `~/.local/bin`,
 Have `~/.local/bin` on PATH. Existing managed files are backed up under
 `~/.local/state/green-static/backups/<timestamp>-<pid>/`, preserving their
 relative paths. Restore selected files from that directory if needed.
-Unrelated files are retained. Reapplying resets managed theme files to dark.
+Unrelated files are retained. Reapplying resets managed theme files to light parchment with sepia accents.
 Hyprland entrypoints are installed last, after their theme and helper files,
 because an active session may automatically reload when its config changes.
 The installer does not explicitly reload applications.
@@ -106,7 +106,7 @@ launching, command execution, workspace/window selection, worktree selection,
 wallpaper collections, screenshots, and theme controls. The app and command
 entries open their respective Wofi search modes.
 
-`Super+Shift+B` cycles green, amber, violet, and cyan accents. `Super+D` opens the app selector; `Super+B` opens Firefox. Accent selection persists independently of light/dark mode.
+`Super+Shift+B` cycles green, amber, violet, cyan, and sepia accents. `Super+D` opens the app selector; `Super+B` opens Firefox. Accent selection persists independently of light/dark mode.
 The accent updates launcher selection, Waybar highlights, terminal colors,
 notifications, GTK/KDE palette accents, and Hyprland borders. Base backgrounds
 and text colors retain the Green Static palette; Firefox's custom chrome
@@ -117,9 +117,9 @@ continues to use its own light/dark styling.
 ~/.config/green-static/toggle-theme.sh accent cycle
 ```
 
-Edit `green-static/accents.json` to adjust the four named palettes. Each has
+Edit `green-static/accents.json` to adjust the five named palettes. Each has
 separate primary/secondary colors for dark and light mode. Reapply an accent
-after editing. Installations start with the green accent.
+after editing. Installations start with the sepia accent.
 
 Use the console's `light` / `dark` entries or the Waybar sun/moon control to
 switch the entire desktop appearance. `toggle-theme.sh set light` selects pale
@@ -127,3 +127,7 @@ backgrounds and dark text across the themed components, independently of accent
 color. GTK's dark preference follows this selection. Neovim reads the desktop
 mode when starting; reopen it after switching. Applications with their own
 forced appearance settings may also need to be set to follow the system.
+
+The light variant uses parchment backgrounds and brown ink. Select the `sepia`
+accent for bronze/brown highlights (`toggle-theme.sh accent sepia`). Kitty retains
+90% opacity. Neovim reads both appearance and accent when it starts.

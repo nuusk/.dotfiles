@@ -9,7 +9,7 @@ choice=$(printf '%s\n' \
   'run         execute command' \
   'workspace   switch window / workspace' \
   'worktree    open project worktree' \
-  'accent      cycle green / amber / violet / cyan' \
+  'accent      cycle green / amber / violet / cyan / sepia' \
   'light       full light desktop' \
   'dark        full dark desktop' \
   'wallpaper   select collection' \

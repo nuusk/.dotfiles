@@ -33,6 +33,13 @@ if [ -z "$wallpaper" ] || [ ! -f "$wallpaper" ]; then
   wallpaper="$fallback_wallpaper"
 fi
 
+resize=crop
+fill_color=000000
+collection_display="$(dirname -- "$wallpaper")/display.conf"
+if [[ -r "$collection_display" ]]; then source "$collection_display"; fi
+case "$resize" in crop|fit|no|stretch) ;; *) resize=crop ;; esac
+[[ "$fill_color" =~ ^[[:xdigit:]]{6}([[:xdigit:]]{2})?$ ]] || fill_color=000000
+
 printf '%s\n' "$wallpaper" > "$state_file"
 
 outputs="$(hyprctl -j monitors 2>/dev/null | jq -r '.[].name' | paste -sd, -)"
@@ -47,7 +54,8 @@ if [ -n "$outputs" ]; then
     --transition-angle "$transition_angle" \
     --transition-wave "$transition_wave" \
     --transition-bezier "$transition_bezier" \
-    --resize crop \
+    --resize "$resize" \
+    --fill-color "$fill_color" \
     --filter Lanczos3
 else
   awww img "$wallpaper" \
@@ -58,6 +66,7 @@ else
     --transition-angle "$transition_angle" \
     --transition-wave "$transition_wave" \
     --transition-bezier "$transition_bezier" \
-    --resize crop \
+    --resize "$resize" \
+    --fill-color "$fill_color" \
     --filter Lanczos3
 fi

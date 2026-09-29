@@ -26,7 +26,7 @@ read_mode() {
 read_accent() {
     local accent=green
     if [[ -r "$state_dir/accent" ]]; then read -r accent < "$state_dir/accent" || true; fi
-    case "$accent" in green|amber|violet|cyan) printf '%s\n' "$accent" ;; *) printf 'green\n' ;; esac
+    case "$accent" in green|amber|violet|cyan|sepia) printf '%s\n' "$accent" ;; *) printf 'green\n' ;; esac
 }
 
 print_status() {
@@ -193,12 +193,12 @@ case "$command" in
         if [[ "$accent" == cycle ]]; then
             case "$(read_accent)" in
                 green) accent=amber ;; amber) accent=violet ;;
-                violet) accent=cyan ;; cyan) accent=green ;;
+                violet) accent=cyan ;; cyan) accent=sepia ;; sepia) accent=green ;;
             esac
         fi
         case "$accent" in
-            green|amber|violet|cyan) ;;
-            *) echo 'Accent must be green, amber, violet, cyan, or cycle' >&2; exit 2 ;;
+            green|amber|violet|cyan|sepia) ;;
+            *) echo 'Accent must be green, amber, violet, cyan, sepia, or cycle' >&2; exit 2 ;;
         esac
         apply_mode "$(read_mode)" "$accent"
         ;;

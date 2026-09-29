@@ -17,11 +17,22 @@ local mode = mode_file and mode_file:read("*l") or "dark"
 if mode_file then mode_file:close() end
 if mode == "light" then
   palette = {
-    bg = "#f3f6f4", bg_card = "#ffffff", bg_muted = "#e5ece8",
-    fg = "#14251f", fg_dim = "#405b50", primary = "#006b46",
+    bg = "#f0e6d2", bg_card = "#f7eedc", bg_muted = "#e5d5b9",
+    fg = "#3f3024", fg_dim = "#715b43", primary = "#006b46",
     accent = "#006477", secondary = "#643589", red = "#a92d32",
-    yellow = "#725500", border = "#9eafa7",
+    yellow = "#725500", border = "#baa17d",
   }
+end
+local theme_root = vim.fn.stdpath("config") .. "/../green-static/"
+local accent_file = io.open(theme_root .. "accent", "r")
+local accent = accent_file and accent_file:read("*l") or "green"
+if accent_file then accent_file:close() end
+local ok, accents = pcall(function()
+  return vim.fn.json_decode(table.concat(vim.fn.readfile(theme_root .. "accents.json"), "\n"))
+end)
+if ok and accents[accent] and accents[accent][mode] then
+  palette.primary = "#" .. accents[accent][mode][1]
+  palette.accent = "#" .. accents[accent][mode][2]
 end
 vim.o.background = mode == "light" and "light" or "dark"
 
