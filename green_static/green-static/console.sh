@@ -10,7 +10,8 @@ choice=$(printf '%s\n' \
   'workspace   switch window / workspace' \
   'worktree    open project worktree' \
   'accent      cycle green / amber / violet / cyan' \
-  'theme       toggle light / dark' \
+  'light       full light desktop' \
+  'dark        full dark desktop' \
   'wallpaper   select collection' \
   'capture     select region' \
   'window      capture window' \
@@ -22,7 +23,7 @@ case "${choice%% *}" in
   workspace) exec "$hypr_dir/workspace-overview.sh" ;;
   worktree) exec "$hypr_dir/open-worktree.sh" ;;
   accent) exec "$theme" accent cycle ;;
-  theme) exec "$theme" toggle ;;
+  light|dark) exec "$theme" set "${choice%% *}" ;;
   capture) exec "$HOME/.local/bin/screenshot" ;;
   window) exec "$hypr_dir/window-screenshot.sh" ;;
   wallpaper)

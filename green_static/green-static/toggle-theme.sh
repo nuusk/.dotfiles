@@ -168,6 +168,7 @@ apply_mode() {
     atomic_copy "$theme_dir/wofi-style.css" "$config_root/wofi/style.css"
     atomic_copy "$theme_dir/gtk.css" "$config_root/gtk-3.0/theme.css"
     atomic_copy "$theme_dir/gtk.css" "$config_root/gtk-4.0/theme.css"
+    python3 "$script_dir/set-gtk-mode.py" "$config_root" "$mode"
     render_dunst_config "$theme_dir/dunst.conf"
     install_light_kde_scheme
     apply_kde_palette "$kde_palette"

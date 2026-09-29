@@ -12,11 +12,24 @@ local palette = {
   border = "#0d3326",
 }
 
+local mode_file = io.open(vim.fn.stdpath("config") .. "/../green-static/current", "r")
+local mode = mode_file and mode_file:read("*l") or "dark"
+if mode_file then mode_file:close() end
+if mode == "light" then
+  palette = {
+    bg = "#f3f6f4", bg_card = "#ffffff", bg_muted = "#e5ece8",
+    fg = "#14251f", fg_dim = "#405b50", primary = "#006b46",
+    accent = "#006477", secondary = "#643589", red = "#a92d32",
+    yellow = "#725500", border = "#9eafa7",
+  }
+end
+vim.o.background = mode == "light" and "light" or "dark"
+
 return {
   {
     "folke/tokyonight.nvim",
     opts = function(_, opts)
-      opts.style = "night"
+      opts.style = mode == "light" and "day" or "night"
       opts.transparent = false
       opts.terminal_colors = true
       opts.on_colors = function(colors)

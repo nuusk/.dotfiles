@@ -15,6 +15,13 @@ Manual controls:
 ~/.config/green-static/toggle-theme.sh set dark
 ```
 
-`Super+B` cycles green/amber/violet/cyan accents; `Super+Shift+B` opens Firefox.
+`Super+Shift+B` cycles green/amber/violet/cyan accents; `Super+B` opens Firefox.
 Use `toggle-theme.sh accent amber` to select an accent directly. Palettes live
 in `accents.json`; light/dark changes retain the selected accent.
+
+Use the console's `light` / `dark` entries or the Waybar sun/moon control to
+switch the entire desktop appearance. `toggle-theme.sh set light` selects pale
+backgrounds and dark text across the themed components, independently of accent
+color. GTK's dark preference follows this selection. Neovim reads the desktop
+mode when starting; reopen it after switching. Applications with their own
+forced appearance settings may also need to be set to follow the system.

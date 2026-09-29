@@ -101,13 +101,12 @@ clipboard persistence, and application reloads still need a live session check.
 
 ## Command console and accents
 
-`Super+D` or `Super+Space` opens the compact command console. It provides app
+`Super+Space` opens the compact command console. It provides app
 launching, command execution, workspace/window selection, worktree selection,
 wallpaper collections, screenshots, and theme controls. The app and command
 entries open their respective Wofi search modes.
 
-`Super+B` cycles green, amber, violet, and cyan accents. Firefox moves to
-`Super+Shift+B`. Accent selection persists independently of light/dark mode.
+`Super+Shift+B` cycles green, amber, violet, and cyan accents. `Super+D` opens the app selector; `Super+B` opens Firefox. Accent selection persists independently of light/dark mode.
 The accent updates launcher selection, Waybar highlights, terminal colors,
 notifications, GTK/KDE palette accents, and Hyprland borders. Base backgrounds
 and text colors retain the Green Static palette; Firefox's custom chrome
@@ -121,3 +120,10 @@ continues to use its own light/dark styling.
 Edit `green-static/accents.json` to adjust the four named palettes. Each has
 separate primary/secondary colors for dark and light mode. Reapply an accent
 after editing. Installations start with the green accent.
+
+Use the console's `light` / `dark` entries or the Waybar sun/moon control to
+switch the entire desktop appearance. `toggle-theme.sh set light` selects pale
+backgrounds and dark text across the themed components, independently of accent
+color. GTK's dark preference follows this selection. Neovim reads the desktop
+mode when starting; reopen it after switching. Applications with their own
+forced appearance settings may also need to be set to follow the system.
