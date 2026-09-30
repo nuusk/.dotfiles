@@ -30,6 +30,7 @@ See [INSTALLATION.md](INSTALLATION.md) for dependencies, activation, and checks.
   worktree/session helpers, Windows 95 Kitty palettes, and a Ghibli background.
 
 Use `Super+A` for a region screenshot and `Super+Shift+A` for a window screenshot.
+Both open Satty when installed, otherwise Swappy.
 `Super+D` opens Wofi. `Super+Tab` opens the workspace overview. `Super+T` opens
 worktree selection; set `WORKTREE_REPO` and `WORKTREE_ROOT` for your repository.
 

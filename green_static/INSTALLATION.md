@@ -4,7 +4,7 @@
 
 Provide Hyprland with Lua configuration support, awww/awww-daemon, hypridle,
 hyprlock, hyprsunset, Waybar, Kitty, Dunst, Wofi, wf-recorder, Dolphin, jq,
-Python 3, ImageMagick (magick), grim, slurp, Satty, wl-clipboard, brightnessctl, playerctl,
+Python 3, ImageMagick (magick), grim, slurp, Satty or Swappy, wl-clipboard, brightnessctl, playerctl,
 pavucontrol, libnotify, util-linux (flock), and GNU coreutils/findutils.
 KDE palette updates use `kwriteconfig6`; desktop appearance uses `gsettings`.
 Install BlexMono Nerd Font Mono and JetBrains Mono. GTK settings expect Breeze
