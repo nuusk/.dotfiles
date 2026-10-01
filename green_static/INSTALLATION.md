@@ -83,6 +83,22 @@ Change themes with Waybar or:
 Select `earthbound`, `zelda`, or `ff7` and an interval in seconds in
 `~/.config/hypr/wallpaper.conf`. Wallpaper helpers notice changes automatically.
 
+Magic wallpapers are available as three separate collections:
+`mtg-reality-fracture` (8), `mtg-the-hobbit` (6), and
+`mtg-marvel-super-heroes` (10). Each contains only 2560×1600 desktop images.
+Select one with **Super+Space → wallpaper**, or use its collection name in
+`wallpaper.conf`. `apply.sh` installs these with the other wallpaper folders;
+the menu discovers them automatically and needs no reload.
+
+These Magic collections use `layout=blur` in their `display.conf`: the complete
+artwork is fitted to each monitor over a dark, blurred backdrop made from the
+same image. Soft side seams blend the centered art into the backdrop on ultrawide
+displays. Rendered canvases are cached in `~/.cache/green-static/wallpapers`;
+source images remain unchanged. The installer includes the blur renderer.
+
+mpv and imv open as floating windows. Use **Super+V** to toggle floating for
+the focused window when needed.
+
 ## Verification
 
 - `Hyprland --verify-config -c ~/.config/hypr/hyprland.lua`

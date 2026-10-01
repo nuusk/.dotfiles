@@ -1,0 +1,49 @@
+{
+  "source": "https://magic.wizards.com/en/news#wallpapers",
+  "set": "The Hobbit",
+  "resolution": "2560x1600",
+  "wallpapers": [
+    {
+      "title": "PLAY KEY ART",
+      "artist": "BY TOMAS DUCHEK",
+      "url": "https://media.wizards.com/2026/images/daily/mgaRmqpndA/2nDQM3h79Z_2560x1600.jpg",
+      "sha256": "27bd26bd9c1140b8ae1ad3aa1f03fdafcf9a97823897f07b63da0dc957ce5f33",
+      "file": "009-play-key-art--2560x1600.jpg"
+    },
+    {
+      "title": "SMAUG, THE GREAT CALAMITY",
+      "artist": "BY CHRIS COLD",
+      "url": "https://media.wizards.com/2026/images/daily/mgaRmqpndA/TWLXfSPn7h_2560x1600.jpg",
+      "sha256": "ced20e6527f22f1fd06aa6440c14d927bcfcf692eaff3e678abf0c82958b82d2",
+      "file": "010-smaug-the-great-calamity--2560x1600.jpg"
+    },
+    {
+      "title": "CRACK THE PLATES",
+      "artist": "BY DMITRY BURMAK",
+      "url": "https://media.wizards.com/2026/images/daily/mgaRmqpndA/61l4pxpHf0_2560x1600.jpg",
+      "sha256": "986e692f74dbe2924decfd303f60c6ad714f3512a4d7459a12c1f485777ac061",
+      "file": "011-crack-the-plates--2560x1600.jpg"
+    },
+    {
+      "title": "TREASURES OF SMAUG",
+      "artist": "BY MARTA NAEL",
+      "url": "https://media.wizards.com/2026/images/daily/mgaRmqpndA/gtal2fPP03_2560x1600.jpg",
+      "sha256": "9307b69b6416dfd473a3f4009486fba42c57ba3da215fa792fa4a86a7e99ac2a",
+      "file": "012-treasures-of-smaug--2560x1600.jpg"
+    },
+    {
+      "title": "MY PRECIOUS",
+      "artist": "BY VALERA LUTFULLINA",
+      "url": "https://media.wizards.com/2026/images/daily/0llKkmnbPT/an305yJbIO_2560x1600.jpg",
+      "sha256": "4fb7b82d743f20936e4a86d4cca4ca5f45018d3b714d16e6586e6aa580fca3bd",
+      "file": "013-my-precious--2560x1600.jpg"
+    },
+    {
+      "title": "THE ARKENSTONE",
+      "artist": "BY GABOLEPS",
+      "url": "https://media.wizards.com/2026/images/daily/0llKkmnbPT/CyQTv8dB9x_2560x1600.jpg",
+      "sha256": "c62c1b98880ab05f18ed6a06f8265e773f6ee5602322ae2196c4384bc4522e5e",
+      "file": "014-the-arkenstone--2560x1600.jpg"
+    }
+  ]
+}

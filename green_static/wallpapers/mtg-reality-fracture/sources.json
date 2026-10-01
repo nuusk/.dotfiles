@@ -1,0 +1,63 @@
+{
+  "source": "https://magic.wizards.com/en/news#wallpapers",
+  "set": "Reality Fracture",
+  "resolution": "2560x1600",
+  "wallpapers": [
+    {
+      "title": "NISSA, LEYLINE TAMER",
+      "artist": "BY JUSTYNA DURA",
+      "url": "https://media.wizards.com/2026/images/daily/ANBOskdovj/nCVwNN6U9s_2560x1600.jpg",
+      "sha256": "ba2eb35642540e746eb162d6168c1ccf7b829767e5e5e14f8a900ab5083ce9a5",
+      "file": "001-nissa-leyline-tamer--2560x1600.jpg"
+    },
+    {
+      "title": "EMRAKUL, THE EXIGENT DOOM",
+      "artist": "BY PRINCESS HIDIR",
+      "url": "https://media.wizards.com/2026/images/daily/ANBOskdovj/ku2YxnaZFO_2560x1600.jpg",
+      "sha256": "e777a7c028b0a23c99a9fefe155ed955d67f43e55a3611bb7cd4d22c912bb278",
+      "file": "002-emrakul-the-exigent-doom--2560x1600.jpg"
+    },
+    {
+      "title": "COUNTERSCULPT",
+      "artist": "BY ANNA PODEDWORNA",
+      "url": "https://media.wizards.com/2026/images/daily/XkcsUjpbDP/poZV5FiCq4_2560x1600.jpg",
+      "sha256": "05a45918826e2902347834c5e7d6b795494433f24412ef1cd7107334632c0284",
+      "file": "003-countersculpt--2560x1600.jpg"
+    },
+    {
+      "title": "AJANI UNRELENTING / AJANI RESOLUTE",
+      "artist": "BY ALEKSI BRICLOT",
+      "url": "https://media.wizards.com/2026/images/daily/XkcsUjpbDP/ziT4P43J5W_2560x1600.jpg",
+      "sha256": "4ea0160de47dffc026ec4e616b0960705c41dc7161118c8f18bc384c37478755",
+      "file": "004-ajani-unrelenting-ajani-resolute--2560x1600.jpg"
+    },
+    {
+      "title": "OVERWRITE THE MULTIVERSE",
+      "artist": "BY RYAN PANCOAST",
+      "url": "https://media.wizards.com/2026/images/daily/XkcsUjpbDP/veu6Wch7od_2560x1600.jpg",
+      "sha256": "0dc1e6b6229c58d915d548c6b2726617179e4995acc47e1f802e160204e61ff2",
+      "file": "005-overwrite-the-multiverse--2560x1600.jpg"
+    },
+    {
+      "title": "KWIA VIGORBLOOM",
+      "artist": "BY RYAN PANCOAST",
+      "url": "https://media.wizards.com/2026/images/daily/XkcsUjpbDP/DHpg1umjHC_2560x1600.jpg",
+      "sha256": "e0567266cb059921e0d492bd2972b9b63f11ac19cfc01ddac34446dedfe80a81",
+      "file": "006-kwia-vigorbloom--2560x1600.jpg"
+    },
+    {
+      "title": "CHARGE THE SANCTUM",
+      "artist": "BY NÉSTOR OSSANDÓN LEAL",
+      "url": "https://media.wizards.com/2026/images/daily/68V85XXdc6/omI7ykL0zI_2560x1600.jpg",
+      "sha256": "3064f7eba1fd8cead93ef91e686ea746a88e9af310fe1b951350d3e4f53a2a93",
+      "file": "007-charge-the-sanctum--2560x1600.jpg"
+    },
+    {
+      "title": "RETURN TO THE LIGHT REALMS",
+      "artist": "BY MAGALI VILLENEUVE",
+      "url": "https://media.wizards.com/2026/images/daily/68V85XXdc6/gyKGKQRThB_2560x1600.jpg",
+      "sha256": "69c4cf2052613e6e4cad86d9313c117be1d239a71a401ed660cd8a6ddb6eb69a",
+      "file": "008-return-to-the-light-realms--2560x1600.jpg"
+    }
+  ]
+}

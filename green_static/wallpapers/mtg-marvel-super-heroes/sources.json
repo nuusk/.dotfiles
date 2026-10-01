@@ -1,0 +1,77 @@
+{
+  "source": "https://magic.wizards.com/en/news#wallpapers",
+  "set": "Marvel Super Heroes",
+  "resolution": "2560x1600",
+  "wallpapers": [
+    {
+      "title": "STORM, FORCE OF NATURE",
+      "artist": "BY KEN LASHLEY & JUAN FERNANDEZ",
+      "url": "https://media.wizards.com/2026/images/daily/RNDkO6dzqY/RZlmbHo93N_2560x1600.jpg",
+      "sha256": "e16df44046d33d4bc14742ce4fb1c6adbfe3732145d7930f6269500b73c526e5",
+      "file": "015-storm-force-of-nature--2560x1600.jpg"
+    },
+    {
+      "title": "SPACESHIFT",
+      "artist": "BY ALEKSI BRICLOT",
+      "url": "https://media.wizards.com/2026/images/daily/RNDkO6dzqY/665u43V926_2560x1600.jpg",
+      "sha256": "3e8594cb5b8e72b73ebc26755c8276305b99d764a6c259c58767911920f940ef",
+      "file": "016-spaceshift--2560x1600.jpg"
+    },
+    {
+      "title": "WOLVERINE, CLAWS OUT",
+      "artist": "BY RYAN PANCOAST",
+      "url": "https://media.wizards.com/2026/images/daily/JOMZTPAY3L/0EpBBh7sHh_2560x1600.jpg",
+      "sha256": "fb02c8a482889237e47d96cc0c198b3c7eab2906089f5503b7bf34fce51a6f30",
+      "file": "017-wolverine-claws-out--2560x1600.jpg"
+    },
+    {
+      "title": "GALACTUS TOKEN",
+      "artist": "BY JUSTYNA DURA",
+      "url": "https://media.wizards.com/2026/images/daily/JOMZTPAY3L/tQ4ULoI7Xn_2560x1600.jpg",
+      "sha256": "90732fd19c18899ee47603c8065487562b1a7693715147d92bc2bb04d192892d",
+      "file": "018-galactus-token--2560x1600.jpg"
+    },
+    {
+      "title": "WE SAY THEE NAY!",
+      "artist": "BY MATEUS MANHANINI",
+      "url": "https://media.wizards.com/2026/images/daily/55P5FykmEV/IZReqRph1G_2560x1600.jpg",
+      "sha256": "6ab07aa1c5cd9a45b5db1b201a8c50c3199f671b991aaaf7b76246ae38d955e5",
+      "file": "019-we-say-thee-nay--2560x1600.jpg"
+    },
+    {
+      "title": "IRON MAN, MASTER OF MACHINES",
+      "artist": "BY JOHN TYLER CHRISTOPHER",
+      "url": "https://media.wizards.com/2026/images/daily/55P5FykmEV/xPI9EhTGbO_2560x1600.jpg",
+      "sha256": "65db59515381fb5e48481a7bd3fad71eb673d935db0dc104dbf9821c9b54e309",
+      "file": "020-iron-man-master-of-machines--2560x1600.jpg"
+    },
+    {
+      "title": "DIRECTOR NICK FURY",
+      "artist": "BY JAVIER CHARRO",
+      "url": "https://media.wizards.com/2026/images/daily/scXpxNThCv/21hrvTrPYU_2560x1600.jpg",
+      "sha256": "cbcc1958730cd58bab403450acca056ab6bb3726b76f7ce8d289ac8d1fcfbb8a",
+      "file": "021-director-nick-fury--2560x1600.jpg"
+    },
+    {
+      "title": "DOCTOR DOOM, KING OF LATVERIA",
+      "artist": "BY NATHANIEL HIMAWAN",
+      "url": "https://media.wizards.com/2026/images/daily/EKuUsqwAmN/WZf3xgDGML_2560x1600.jpg",
+      "sha256": "9bfbc60d5174812aa557ad412c2a6d9426e2738796965467a3f3b07225fa3fe3",
+      "file": "022-doctor-doom-king-of-latveria--2560x1600.jpg"
+    },
+    {
+      "title": "GO NUTS!",
+      "artist": "BY IGNATIUS BUDI",
+      "url": "https://media.wizards.com/2026/images/daily/EKuUsqwAmN/Gi2Uv3wW5T_2560x1600.jpg",
+      "sha256": "096da8daf018f69bed96be69c714bbb4a06edceb4f6e93728e65229edc652d6c",
+      "file": "023-go-nuts--2560x1600.jpg"
+    },
+    {
+      "title": "THE FANTASTIC FOUR",
+      "artist": "BY YASMINE PUTRI",
+      "url": "https://media.wizards.com/2026/images/daily/wcBHhho4EE/teFSWcyqm0_2560x1600.jpg",
+      "sha256": "eb533da1db43ee561163a043448849521eb2553ffbfc64520398aa5d37b5cf14",
+      "file": "024-the-fantastic-four--2560x1600.jpg"
+    }
+  ]
+}

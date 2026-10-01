@@ -242,6 +242,13 @@ for _, workspace in ipairs(special_workspaces) do
     })
 end
 
+-- Media viewers open separately from the tiled workspace layout.
+hl.window_rule({
+    name = "media-viewers-float",
+    match = { class = "^(mpv|imv)$" },
+    float = true,
+})
+
 hl.layer_rule({
     match = { namespace = "wofi" },
     dim_around = true,

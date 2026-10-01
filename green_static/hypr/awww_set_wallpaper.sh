@@ -53,8 +53,8 @@ transition_args=(
   --transition-bezier "$transition_bezier"
 )
 monitors="$(hyprctl -j monitors)"
-if [[ "$layout" == corner ]]; then
-  renderer="$(dirname -- "${BASH_SOURCE[0]}")/awww_render_corner.sh"
+if [[ "$layout" == corner || "$layout" == blur ]]; then
+  renderer="$(dirname -- "${BASH_SOURCE[0]}")/awww_render_${layout}.sh"
   while IFS=$'\t' read -r output width height transform; do
     # Rotated monitors need their physical canvas dimensions exchanged.
     if (( transform % 2 )); then swap="$width"; width="$height"; height="$swap"; fi
