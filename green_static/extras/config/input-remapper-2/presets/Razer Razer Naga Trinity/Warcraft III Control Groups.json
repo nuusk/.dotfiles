@@ -57,7 +57,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "KEY_KP1"
+        "output_symbol": "KEY_KP5"
     },
     {
         "input_combination": [
@@ -67,7 +67,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "KEY_KP2"
+        "output_symbol": "KEY_KP3"
     },
     {
         "input_combination": [
@@ -77,7 +77,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "KEY_KP3"
+        "output_symbol": "KEY_KP1"
     },
     {
         "input_combination": [
@@ -87,7 +87,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "KEY_KP4"
+        "output_symbol": "KEY_KP6"
     },
     {
         "input_combination": [
@@ -97,7 +97,7 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "KEY_KP5"
+        "output_symbol": "KEY_KP4"
     },
     {
         "input_combination": [
@@ -107,6 +107,6 @@
             }
         ],
         "target_uinput": "keyboard",
-        "output_symbol": "KEY_KP6"
+        "output_symbol": "KEY_KP2"
     }
 ]

@@ -33,6 +33,8 @@ The presets are stored under
 `~/.config/input-remapper-2/presets/Razer Razer Naga Trinity/`.
 They expect the mouse's onboard side buttons to emit F1–F12, configured using
 Synapse previously. The Moonlander and other devices are not remapped.
+The Hyprland rule for `input-remapper-keyboard` uses `numpad:mac`, so keypad
+outputs remain digits with Num Lock off or Shift held.
 The empty Against the Storm preset leaves those onboard bindings intact.
 
 **Super+Space → naga-on** activates **Warcraft III Control Groups**:
@@ -42,7 +44,9 @@ The empty Against the Storm preset leaves those onboard bindings intact.
 | 1, 2 | Number-row 6, 7 |
 | 3 | Unchanged F3 |
 | 4, 5, 6 | Number-row 8, 9, 0 |
-| 7–12 | Numpad 1, 2, 3, 4, 5, 6 |
+| 9, 12 | Numpad 1, 2 (top inventory row) |
+| 8, 11 | Numpad 3, 4 (middle inventory row) |
+| 7, 10 | Numpad 5, 6 (bottom inventory row) |
 
 **naga-off** stops the Naga remapping and restores F1–F12. Activation applies
 to every application until stopped; switching games does not switch presets.

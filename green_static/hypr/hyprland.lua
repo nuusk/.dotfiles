@@ -110,6 +110,13 @@ hl.config({
     },
 })
 
+-- Keep remapped inventory keys numeric, including while Shift is held.
+hl.device({
+    name = "input-remapper-keyboard",
+    kb_options = "caps:super,numpad:mac",
+    numlock_by_default = true,
+})
+
 -- Animation curves
 hl.curve("snap", {
     type = "bezier",
