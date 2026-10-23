@@ -65,6 +65,7 @@ chmod +x "$target_home/.local/bin/"{dolphin,dunst_toggle,screenshot}
 
 if [[ $with_extras == 1 ]]; then
   copy_tree "$bundle_root/extras/config" "$target_home/.config"
+  copy_tree "$bundle_root/extras/state" "$target_home/.local/state"
   copy_tree "$bundle_root/extras/background" "$target_home/code/backgrounds/cycling/ghibli"
 fi
 

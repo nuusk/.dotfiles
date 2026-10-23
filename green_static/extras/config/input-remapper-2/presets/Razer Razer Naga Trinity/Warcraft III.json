@@ -1,0 +1,92 @@
+[
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 62
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_F1"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 63
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_F2"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 64
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_F3"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 65
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_KP1"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 66
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_KP4"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 67
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_KP7"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 68
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_KP2"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 87
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_KP5"
+    },
+    {
+        "input_combination": [
+            {
+                "type": 1,
+                "code": 88
+            }
+        ],
+        "target_uinput": "keyboard",
+        "output_symbol": "KEY_KP8"
+    }
+]

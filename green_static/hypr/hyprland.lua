@@ -31,6 +31,7 @@ hl.on("hyprland.start", function()
     for _, command in ipairs({
         "waybar",
         "dunst",
+        "/usr/lib/polkit-kde-authentication-agent-1",
         wallpaper,
         wallpaper_cycle,
         wallpaper_listener,

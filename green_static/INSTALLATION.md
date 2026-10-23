@@ -7,6 +7,8 @@ hyprlock, hyprsunset, Waybar, Kitty, Dunst, Wofi, wf-recorder, Dolphin, jq,
 Python 3, ImageMagick (magick), grim, slurp, Satty or Swappy, wl-clipboard, brightnessctl, playerctl,
 pavucontrol, libnotify, util-linux (flock), and GNU coreutils/findutils.
 KDE palette updates use `kwriteconfig6`; desktop appearance uses `gsettings`.
+The Lua session starts KDE's Polkit authentication agent; install
+`polkit-kde-agent` for graphical administrator-password dialogs.
 Install BlexMono Nerd Font Mono and JetBrains Mono. GTK settings expect Breeze
 and its icons/cursors. Neovim integration expects an existing LazyVim setup.
 Firefox and Neovim are optional. Slack, Obsidian, 1Password, and Signal have
@@ -48,6 +50,10 @@ This also installs Audacity settings (without recent-file paths), fontconfig,
 locale/KDE environment settings, xsettingsd and GTK 2 defaults, the Against the
 Storm keyd map, Windows 95 Kitty palettes, Bash worktree/session helpers, and
 Neovim completion/search/Python configuration. It includes the Ghibli wallpaper.
+It also installs the Naga Input Remapper presets, Warcraft III hotkey files,
+and the saved USB Audio Speakers default. The audio preference is stored under
+`~/.local/state/wireplumber`; install it while WirePlumber is stopped, or before
+starting a fresh desktop session, so the running daemon cannot overwrite it.
 See `extras/README.md` for behavior changes and manual activation. Extras may
 overwrite existing application settings; review them before selecting this flag.
 
@@ -128,6 +134,13 @@ while the prompt is open. `Super+W` requests a normal window close.
 launching, command execution, workspace/window selection, worktree selection,
 wallpaper collections, screenshots, and theme controls. The app and command
 entries open their respective Wofi search modes.
+
+The `naga-on` entry activates the **Warcraft III Control Groups** mouse preset;
+`naga-off` stops remapping only the Naga and restores its onboard F1–F12 buttons.
+Both show desktop notifications. These optional actions require Input Remapper
+and its running system service (`sudo systemctl enable --now input-remapper`).
+Install the presets with `./apply.sh --with-extras`; they do not autoload.
+See `extras/README.md` for the button layout and Warcraft hotkey installation.
 
 `Super+Shift+B` cycles green, amber, violet, cyan, and sepia accents. `Super+D` opens the app selector; `Super+B` opens Firefox. Accent selection persists independently of light/dark mode.
 The accent updates launcher selection, Waybar highlights, terminal colors,

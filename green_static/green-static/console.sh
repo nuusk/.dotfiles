@@ -9,6 +9,8 @@ choice=$(printf '%s\n' \
   'run         execute command' \
   'workspace   switch window / workspace' \
   'worktree    open project worktree' \
+  'naga-on     activate Warcraft mouse control groups' \
+  'naga-off    restore original mouse buttons' \
   'accent      cycle green / amber / violet / cyan / sepia / warcraft' \
   'warcraft    parchment / bronze / blue / game drawings' \
   'parchment   sepia / original sketch collection' \
@@ -24,6 +26,8 @@ case "${choice%% *}" in
   run) exec wofi --show run --prompt 'run >' ;;
   workspace) exec "$hypr_dir/workspace-overview.sh" ;;
   worktree) exec "$hypr_dir/open-worktree.sh" ;;
+  naga-on) exec "$config_root/green-static/naga-profile.sh" on ;;
+  naga-off) exec "$config_root/green-static/naga-profile.sh" off ;;
   accent) exec "$theme" accent cycle ;;
   warcraft|parchment) exec "$theme" preset "${choice%% *}" ;;
   light|dark) exec "$theme" set "${choice%% *}" ;;
