@@ -39,10 +39,10 @@ The empty Against the Storm preset leaves those onboard bindings intact.
 
 | Side button | Output |
 | --- | --- |
-| 1, 2 | Number-row 1, 2 |
+| 1, 2 | Number-row 6, 7 |
 | 3 | Unchanged F3 |
-| 4–11 | Number-row 3, 4, 5, 6, 7, 8, 9, 0 |
-| 12 | Backtick/tilde key |
+| 4, 5, 6 | Number-row 8, 9, 0 |
+| 7–12 | Numpad 1, 2, 3, 4, 5, 6 |
 
 **naga-off** stops the Naga remapping and restores F1–F12. Activation applies
 to every application until stopped; switching games does not switch presets.
