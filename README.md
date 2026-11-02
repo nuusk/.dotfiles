@@ -31,7 +31,7 @@ See:
 
 - `mipha/opencode/README.md`
 
-for the manual setup steps needed to make it work, including API keys, MCP auth, and peon-ping pack configuration.
+for the manual setup steps needed to make it work, including API keys and MCP auth.
 
 In `i3` folder the structure is as follows:
 ```

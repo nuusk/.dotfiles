@@ -23,15 +23,14 @@ wr <name>     # force remove ~/worktrees/<repo>/<name>
 wm            # cd to the current repo main worktree
 wra           # remove all current repo worktrees under ~/worktrees/<repo>
 ws            # search all workspaces under ~/worktrees with fzf, then cd to the selected one
-wa            # resume or start the Codex agent session for the current worktree
+wa            # resume or start the Claude agent session for the current worktree
 wa <name>     # resume/start the agent for ~/worktrees/<repo>/<name>
 wa --pick     # choose a worktree, then resume/start its agent session
-wa --list     # list worktrees and their latest Codex session
-wa --new      # start a fresh Codex session for the current worktree
+wa --list     # list worktrees and their latest Claude session
+wa --new      # start a fresh Claude session for the current worktree
 ```
 
-`wa` links worktrees to agents by scanning Codex session metadata under `~/.codex/sessions`
-and matching the session `cwd` to the worktree path.
+`wa` links worktrees to agents through Claude Code sessions under `~/.claude/projects/`, stored per directory, and resumes the newest one for that worktree.
 
 ### Other aliases
 
@@ -40,6 +39,5 @@ k      # kubectl
 ls     # eza
 bat    # cat
 grep   # grep --color=auto
-peon   # peon-ping controls
 h      # print custom shortcut help
 ```

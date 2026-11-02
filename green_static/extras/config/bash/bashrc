@@ -257,58 +257,15 @@ _wa_workspace_entries() {
   done | sort
 }
 
-_wa_session_meta() {
-  local file=$1 line payload root session_id
-
-  IFS= read -r line <"$file" || return 1
-  [[ $line == *'"type":"session_meta"'* && $line == *'"payload":{'* ]] || return 1
-
-  payload=${line#*'"payload":{'}
-  if [[ $payload == *'"session_id":"'* ]]; then
-    session_id=${payload#*'"session_id":"'}
-  elif [[ $payload == *'"id":"'* ]]; then
-    session_id=${payload#*'"id":"'}
-  else
-    return 1
-  fi
-  session_id=${session_id%%\"*}
-
-  [[ $payload == *'"cwd":"'* ]] || return 1
-  root=${payload#*'"cwd":"'}
-  root=${root%%\"*}
-
-  [[ -n $root && -n $session_id ]] || return 1
-  printf '%s\t%s\n' "$root" "$session_id"
-}
-
-_wa_session_entries() {
-  [[ -d "$HOME/.codex/sessions" ]] || return
-
-  find "$HOME/.codex/sessions" -type f -name 'rollout-*.jsonl' -printf '%T@\t%p\n' 2>/dev/null |
-    sort -nr |
-    while IFS=$'\t' read -r _ file; do
-      local meta
-      meta=$(_wa_session_meta "$file") || continue
-      printf '%s\t%s\n' "$meta" "$file"
-    done
-}
-
+# Claude stores sessions per directory, with non-alphanumerics in the path as "-".
 _wa_latest_session_for_root() {
-  local root=$1
-  local file meta session_root session_id _
+  local dir="$HOME/.claude/projects/${1//[^a-zA-Z0-9]/-}"
+  local file
 
-  [[ -d "$HOME/.codex/sessions" ]] || return 1
-
-  while IFS=$'\t' read -r _ file; do
-    meta=$(_wa_session_meta "$file") || continue
-    IFS=$'\t' read -r session_root session_id <<<"$meta"
-    if [[ $session_root == "$root" ]]; then
-      printf '%s\n' "$session_id"
-      return 0
-    fi
-  done < <(find "$HOME/.codex/sessions" -type f -name 'rollout-*.jsonl' -printf '%T@\t%p\n' 2>/dev/null | sort -nr)
-
-  return 1
+  [[ -d $dir ]] || return 1
+  file=$(find "$dir" -maxdepth 1 -type f -name '*.jsonl' -printf '%T@\t%f\n' 2>/dev/null | sort -nr | head -n 1 | cut -f2)
+  [[ -n $file ]] || return 1
+  printf '%s\n' "${file%.jsonl}"
 }
 
 _wa_resolve_root() {
@@ -386,17 +343,10 @@ _wa_select_root() {
 
 _wa_list() {
   local label root session_id
-  declare -A latest_sessions=()
-
-  while IFS=$'\t' read -r root session_id _; do
-    [[ -n ${latest_sessions[$root]:-} ]] && continue
-    latest_sessions[$root]=$session_id
-  done < <(_wa_session_entries)
 
   printf "%-40s %-36s %s\n" "workspace" "latest session" "path"
   while IFS=$'\t' read -r label root; do
-    session_id=${latest_sessions[$root]:-}
-    [[ -n $session_id ]] || session_id="-"
+    session_id=$(_wa_latest_session_for_root "$root") || session_id="-"
     printf "%-40s %-36s %s\n" "$label" "$session_id" "$root"
   done < <(_wa_workspace_entries)
 }
@@ -404,12 +354,12 @@ _wa_list() {
 _wa_help() {
   cat <<'EOF'
 usage:
-  wa              resume latest Codex session for this worktree, or start one
+  wa              resume latest Claude session for this worktree, or start one
   wa <name>       resume/start session for ~/worktrees/<repo>/<name>
   wa <repo/name>  resume/start session for ~/worktrees/<repo>/<name>
   wa --pick       choose a worktree, then resume/start its session
-  wa --list       list worktrees and their latest Codex session
-  wa --new        start a fresh Codex session for this worktree
+  wa --list       list worktrees and their latest Claude session
+  wa --new        start a fresh Claude session for this worktree
 EOF
 }
 
@@ -451,13 +401,13 @@ wa() {
   fi
 
   if [[ $mode != new ]] && session_id=$(_wa_latest_session_for_root "$root"); then
-    echo "Resuming Codex agent for: $root"
-    codex resume -C "$root" "$session_id" "$@"
+    echo "Resuming Claude agent for: $root"
+    (cd "$root" && claude --resume "$session_id" "$@")
     return
   fi
 
-  echo "Starting new Codex agent for: $root"
-  codex -C "$root" "$@"
+  echo "Starting new Claude agent for: $root"
+  (cd "$root" && claude "$@")
 }
 
 h() {
@@ -472,22 +422,18 @@ Git worktrees
   wm            cd to the current repo main worktree
   wra           remove all current repo worktrees under ~/worktrees/<repo>
   ws            search all workspaces under ~/worktrees, then cd to the selected one
-  wa            resume or start the Codex agent session for the current worktree
+  wa            resume or start the Claude agent session for the current worktree
   wa --pick     choose a worktree, then resume/start its agent session
-  wa --list     list worktrees and their latest Codex session
+  wa --list     list worktrees and their latest Claude session
 
 Aliases
   k             kubectl
   ls            eza
   bat           cat
   grep          grep --color=auto
-  peon          peon-ping controls
 EOF
 }
 
 # Secrets
 [ -f "$HOME/.secrets/env" ] && source "$HOME/.secrets/env"
 
-# peon-ping quick controls
-alias peon="bash $HOME/.claude/hooks/peon-ping/peon.sh"
-[ -f $HOME/.claude/hooks/peon-ping/completions.bash ] && source $HOME/.claude/hooks/peon-ping/completions.bash

@@ -111,12 +111,12 @@ target="$(cut -f3- <<<"$action_line")"
 case "$action" in
   workspace)
     if [[ "$target" == special:* ]]; then
-      hyprctl dispatch togglespecialworkspace "${target#special:}"
+      hyprctl dispatch "hl.dsp.workspace.toggle_special(\"${target#special:}\")"
     else
-      hyprctl dispatch workspace "$target"
+      hyprctl dispatch "hl.dsp.focus({ workspace = \"$target\" })"
     fi
     ;;
   window)
-    hyprctl dispatch focuswindow "address:$target"
+    hyprctl dispatch "hl.dsp.focus({ window = \"address:$target\" })"
     ;;
 esac

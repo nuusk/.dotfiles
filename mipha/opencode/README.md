@@ -8,10 +8,6 @@ This directory intentionally omits live secrets and account-specific tokens.
 
 - `opencode.json`
   Global OpenCode config with MCP entries.
-- `plugins/peon-ping.ts`
-  Local OpenCode plugin.
-- `peon-ping/config.json`
-  Repo-safe plugin config.
 - `package.json`
   Dependency manifest for local plugins.
 
@@ -24,9 +20,6 @@ mkdir -p ~/.config/opencode
 cp ~/code/.dotfiles/mipha/opencode/opencode.json ~/.config/opencode/opencode.json
 cp ~/code/.dotfiles/mipha/opencode/package.json ~/.config/opencode/package.json
 cp ~/code/.dotfiles/mipha/opencode/.gitignore ~/.config/opencode/.gitignore
-mkdir -p ~/.config/opencode/plugins ~/.config/opencode/peon-ping
-cp ~/code/.dotfiles/mipha/opencode/plugins/* ~/.config/opencode/plugins/
-cp ~/code/.dotfiles/mipha/opencode/peon-ping/config.json ~/.config/opencode/peon-ping/config.json
 ```
 
 Then install plugin dependencies:
@@ -65,27 +58,6 @@ export GROUNDCOVER_TIMEZONE="Europe/Warsaw"
 
 The Atlassian MCP entry is present, but authentication still needs to be completed interactively in OpenCode / the provider flow.
 
-### 4. Peon-ping packs
-
-The repo-safe `peon-ping/config.json` does not hardcode a personal `packs_dir`.
-
-If you want custom packs such as `pikmin`, you need to either:
-
-1. install packs to the plugin's default path, or
-2. manually add a `packs_dir` field to `~/.config/opencode/peon-ping/config.json`
-
-Example:
-
-```json
-{
-  "packs_dir": "/home/<you>/.claude/hooks/pikmin/packs"
-}
-```
-
-You may also want to change:
-
-- `active_pack`
-- `default_pack`
 
 ## Notes
 
