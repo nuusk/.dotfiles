@@ -61,7 +61,8 @@ copy_tree "$bundle_root/kde/color-schemes" "$target_home/.local/share/color-sche
 copy_file "$bundle_root/green-static/themes/light/GreenStaticLight.colors" "$target_home/.local/share/color-schemes/GreenStaticLight.colors"
 copy_file "$bundle_root/helpers/dunst_toggle.sh" "$target_home/.local/bin/dunst_toggle"
 copy_file "$bundle_root/helpers/screenshot.sh" "$target_home/.local/bin/screenshot"
-chmod +x "$target_home/.local/bin/"{dolphin,dunst_toggle,screenshot}
+copy_file "$bundle_root/helpers/t.sh" "$target_home/.local/bin/t"
+chmod +x "$target_home/.local/bin/"{dolphin,dunst_toggle,screenshot,t}
 
 if [[ $with_extras == 1 ]]; then
   copy_tree "$bundle_root/extras/config" "$target_home/.config"

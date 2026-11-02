@@ -32,6 +32,8 @@ See [INSTALLATION.md](INSTALLATION.md) for dependencies, activation, and checks.
 Use `Super+A` for a region screenshot and `Super+Shift+A` for a window screenshot.
 Both open Satty when installed, otherwise Swappy.
 `Super+D` opens Wofi. `Super+Tab` opens the workspace overview. `Super+T` opens
+the task picker (`t`, needs `fzf`, `jq` and Claude Code), which keeps one Markdown file per task in
+`~/tasks/{work,private}` and opens each task's worktree and Claude session. `Super+Shift+T` opens
 worktree selection; set `WORKTREE_REPO` and `WORKTREE_ROOT` for your repository.
 
 The portable monitor layout uses automatic placement. Customize it on each

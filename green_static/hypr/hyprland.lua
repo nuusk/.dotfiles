@@ -175,7 +175,8 @@ hl.bind(main_mod .. " + A", hl.dsp.exec_cmd(screenshot))
 hl.bind(main_mod .. " + SHIFT + A", hl.dsp.exec_cmd(hypr_dir .. "/window-screenshot.sh"))
 hl.bind(main_mod .. " + B", hl.dsp.exec_cmd(hypr_dir .. "/glitch-launch.sh firefox"))
 hl.bind(main_mod .. " + SHIFT + B", hl.dsp.exec_cmd(config_home .. "/green-static/toggle-theme.sh accent cycle"))
-hl.bind(main_mod .. " + T", hl.dsp.exec_cmd(open_worktree))
+hl.bind(main_mod .. " + T", hl.dsp.exec_cmd(hypr_dir .. "/glitch-launch.sh kitty --class task-picker " .. os.getenv("HOME") .. "/.local/bin/t"))
+hl.bind(main_mod .. " + SHIFT + T", hl.dsp.exec_cmd(open_worktree))
 hl.bind("CTRL + ALT + SHIFT + A", hl.dsp.exec_cmd(next_background))
 hl.bind("CTRL + ALT + SHIFT + B", hl.dsp.exec_cmd(toggle_crt))
 hl.bind(main_mod .. " + R", hl.dsp.exec_cmd(hypr_dir .. "/toggle-record.sh"))
@@ -255,6 +256,14 @@ hl.window_rule({
     name = "media-viewers-float",
     match = { class = "^(mpv|imv)$" },
     float = true,
+})
+
+hl.window_rule({
+    name = "task-picker-float",
+    match = { class = "^task-picker$" },
+    float = true,
+    size = "1400 800",
+    center = true,
 })
 
 hl.layer_rule({
