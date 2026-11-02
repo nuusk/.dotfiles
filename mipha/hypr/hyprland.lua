@@ -7,31 +7,16 @@ if not config_home or config_home == "" then
 end
 
 local hypr_dir = config_home .. "/hypr"
-local theme = require("theme")
+local theme = dofile(hypr_dir .. "/theme.lua")
 
--- Monitors
-hl.monitor({
-    output = "eDP-1",
-    mode = "1920x1200@60.00",
-    position = "760x1440",
-    scale = 1.0,
-})
-
-hl.monitor({
-    output = "HDMI-A-1",
-    mode = "1920x1080@60.00",
-    position = "2680x0",
-    scale = 1.0,
-})
-
--- Alternative ultrawide setup:
--- hl.monitor({ output = "HDMI-A-1", mode = "3440x1440@60.00", position = "0x0", scale = 1.0 })
+-- Portable default; customize output names and positions on the target machine.
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1.0 })
 
 -- Programs and scripts
 local terminal = hypr_dir .. "/glitch-launch.sh kitty"
 local file_manager = "dolphin"
-local menu = hypr_dir .. "/glitch-launch.sh --shader " .. hypr_dir .. "/shaders/wofi_glitch.frag wofi --show drun"
-local screenshot = "/usr/bin/screenshot"
+local menu = hypr_dir .. "/glitch-launch.sh --shader " .. hypr_dir .. "/shaders/wofi_glitch.frag " .. config_home .. "/green-static/console.sh"
+local screenshot = assert(os.getenv("HOME")) .. "/.local/bin/screenshot"
 local wallpaper = hypr_dir .. "/awww_start.sh"
 local wallpaper_cycle = hypr_dir .. "/awww_cycle.sh"
 local wallpaper_listener = hypr_dir .. "/awww_monitor_listener.sh"
@@ -46,6 +31,7 @@ hl.on("hyprland.start", function()
     for _, command in ipairs({
         "waybar",
         "dunst",
+        "/usr/lib/polkit-kde-authentication-agent-1",
         wallpaper,
         wallpaper_cycle,
         wallpaper_listener,
@@ -124,6 +110,13 @@ hl.config({
     },
 })
 
+-- Keep remapped inventory keys numeric, including while Shift is held.
+hl.device({
+    name = "input-remapper-keyboard",
+    kb_options = "caps:super,numpad:mac",
+    numlock_by_default = true,
+})
+
 -- Animation curves
 hl.curve("snap", {
     type = "bezier",
@@ -168,18 +161,20 @@ hl.device({
 local main_mod = "SUPER"
 
 hl.bind(main_mod .. " + RETURN", hl.dsp.exec_cmd(terminal))
-hl.bind(main_mod .. " + Q", hl.dsp.window.close())
+hl.bind(main_mod .. " + Q", hl.dsp.exec_cmd(hypr_dir .. "/force-kill.py"))
 hl.bind(main_mod .. " + W", hl.dsp.window.close())
 hl.bind(main_mod .. " + N", hl.dsp.exec_cmd(previous_background))
 hl.bind(main_mod .. " + M", hl.dsp.exec_cmd(next_background))
 hl.bind(main_mod .. " + E", hl.dsp.exec_cmd(file_manager))
 hl.bind(main_mod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(main_mod .. " + D", hl.dsp.exec_cmd(menu))
+hl.bind(main_mod .. " + D", hl.dsp.exec_cmd(hypr_dir .. "/glitch-launch.sh --shader " .. hypr_dir .. "/shaders/wofi_glitch.frag wofi --show drun --prompt 'apps >'"))
 hl.bind(main_mod .. " + SPACE", hl.dsp.exec_cmd(menu))
 hl.bind(main_mod .. " + TAB", hl.dsp.exec_cmd(workspace_overview))
 hl.bind(main_mod .. " + L", hl.dsp.exec_cmd("hyprlock"))
 hl.bind(main_mod .. " + A", hl.dsp.exec_cmd(screenshot))
+hl.bind(main_mod .. " + SHIFT + A", hl.dsp.exec_cmd(hypr_dir .. "/window-screenshot.sh"))
 hl.bind(main_mod .. " + B", hl.dsp.exec_cmd(hypr_dir .. "/glitch-launch.sh firefox"))
+hl.bind(main_mod .. " + SHIFT + B", hl.dsp.exec_cmd(config_home .. "/green-static/toggle-theme.sh accent cycle"))
 hl.bind(main_mod .. " + T", hl.dsp.exec_cmd(open_worktree))
 hl.bind("CTRL + ALT + SHIFT + A", hl.dsp.exec_cmd(next_background))
 hl.bind("CTRL + ALT + SHIFT + B", hl.dsp.exec_cmd(toggle_crt))
@@ -255,7 +250,17 @@ for _, workspace in ipairs(special_workspaces) do
     })
 end
 
+-- Media viewers open separately from the tiled workspace layout.
+hl.window_rule({
+    name = "media-viewers-float",
+    match = { class = "^(mpv|imv)$" },
+    float = true,
+})
+
 hl.layer_rule({
     match = { namespace = "wofi" },
     dim_around = true,
 })
+
+-- hyprmon: managed monitor profile include
+require("hyprmon")

@@ -1,11 +1,12 @@
 show=drun
-width=560
-height=420
+width=620
+height=390
 always_parse_args=true
 show_all=true
 print_command=true
 layer=overlay
 insensitive=true
-prompt=❯
-allow_markup=true
-allow_images=true
+prompt=console >
+allow_markup=false
+allow_images=false
+hide_scroll=true

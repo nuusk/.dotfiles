@@ -481,13 +481,9 @@ Aliases
   ls            eza
   bat           cat
   grep          grep --color=auto
-  peon          peon-ping controls
 EOF
 }
 
 # Secrets
 [ -f "$HOME/.secrets/env" ] && source "$HOME/.secrets/env"
 
-# peon-ping quick controls
-alias peon="bash $HOME/.claude/hooks/peon-ping/peon.sh"
-[ -f $HOME/.claude/hooks/peon-ping/completions.bash ] && source $HOME/.claude/hooks/peon-ping/completions.bash

@@ -40,6 +40,5 @@ k      # kubectl
 ls     # eza
 bat    # cat
 grep   # grep --color=auto
-peon   # peon-ping controls
 h      # print custom shortcut help
 ```

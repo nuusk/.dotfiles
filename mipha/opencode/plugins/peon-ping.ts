@@ -261,81 +261,281 @@ function loadManifest(packDir: string): CESPManifest | null {
 }
 
 function migrateLegacyManifest(legacy: any): CESPManifest {
-  const aliasMap: Record<string, CESPCategory> = {
-    startup: "session.start",
-    shutdown: "session.end",
-    success: "task.complete",
+  const LEGACY_MAP: Record<string, CESPCategory> = {
+    greeting: "session.start",
+    acknowledge: "task.acknowledge",
     complete: "task.complete",
     error: "task.error",
-    attention: "input.required",
     permission: "input.required",
-    prompt: "input.required",
-    progress: "task.progress",
-    spam: "user.spam",
+    resource_limit: "resource.limit",
+    annoyed: "user.spam",
   }
 
   const categories: Partial<Record<CESPCategory, CESPCategoryEntry>> = {}
-  const legacyCategories = legacy.categories || {}
 
-  for (const [legacyKey, entry] of Object.entries(legacyCategories)) {
-    const mapped = aliasMap[legacyKey]
-    if (!mapped) continue
-
-    const sounds = Array.isArray((entry as any).sounds)
-      ? (entry as any).sounds.map((s: any) => ({
-          file: s.file,
-          label: s.label || path.basename(s.file),
+  if (legacy.categories) {
+    for (const [oldName, entry] of Object.entries(legacy.categories)) {
+      const cespName = LEGACY_MAP[oldName] || oldName
+      if (CESP_CATEGORIES.includes(cespName as CESPCategory)) {
+        const catEntry = entry as any
+        const sounds: CESPSound[] = (catEntry.sounds || []).map((s: any) => ({
+          file: s.file.includes("/") ? s.file : `sounds/${s.file}`,
+          label: s.label || s.line || s.file,
+          ...(s.sha256 ? { sha256: s.sha256 } : {}),
         }))
-      : []
-
-    categories[mapped] = { sounds }
-  }
-
-  return {
-    cesp_version: "1.0.0",
-    name: legacy.name || "legacy_pack",
-    display_name: legacy.display_name || legacy.name || "Legacy Pack",
-    version: legacy.version || "0.0.0",
-    description: legacy.description,
-    author: legacy.author,
-    license: legacy.license,
-    homepage: legacy.homepage,
-    tags: legacy.tags,
-    categories,
-    category_aliases: aliasMap,
-  }
-}
-
-function resolveActivePack(config: PeonConfig, state: PeonState, sessionID?: string): string | null {
-  const packsDir = getPacksDir(config)
-  if (!fs.existsSync(packsDir)) return null
-
-  if (sessionID && state.session_packs[sessionID]) return state.session_packs[sessionID]
-
-  const rotation = config.pack_rotation || []
-  const all = rotation.length > 0 ? rotation : [config.active_pack]
-
-  for (const packName of all) {
-    const packDir = path.join(packsDir, packName)
-    if (loadManifest(packDir)) {
-      if (sessionID) {
-        state.session_packs[sessionID] = packName
-        saveState(state)
+        categories[cespName as CESPCategory] = { sounds }
       }
-      return packName
     }
   }
 
+  return {
+    cesp_version: "1.0",
+    name: legacy.name || "unknown",
+    display_name: legacy.display_name || legacy.name || "Unknown Pack",
+    version: legacy.version || "0.0.0",
+    description: legacy.description,
+    categories,
+    category_aliases: LEGACY_MAP,
+  }
+}
+
+function listPacks(packsDir: string): string[] {
+  try {
+    return fs
+      .readdirSync(packsDir)
+      .filter((name) => {
+        const dir = path.join(packsDir, name)
+        try {
+          if (!fs.statSync(dir).isDirectory()) return false
+        } catch {
+          return false
+        }
+        return (
+          fs.existsSync(path.join(dir, "openpeon.json")) ||
+          fs.existsSync(path.join(dir, "manifest.json"))
+        )
+      })
+      .sort()
+  } catch {
+    return []
+  }
+}
+
+function resolveCategory(
+  manifest: CESPManifest,
+  category: CESPCategory,
+): CESPCategoryEntry | null {
+  const direct = manifest.categories[category]
+  if (direct && direct.sounds.length > 0) return direct
   return null
 }
 
-function getSoundForCategory(manifest: CESPManifest, packDir: string, category: CESPCategory): string | null {
-  const entry = manifest.categories[category]
-  if (!entry || !entry.sounds || entry.sounds.length === 0) return null
+function pickSound(
+  manifest: CESPManifest,
+  category: CESPCategory,
+  state: PeonState,
+): CESPSound | null {
+  const entry = resolveCategory(manifest, category)
+  if (!entry || entry.sounds.length === 0) return null
 
-  const sound = entry.sounds[Math.floor(Math.random() * entry.sounds.length)]
-  const full = path.join(packDir, sound.file)
-  return fs.existsSync(full) ? full : null
+  const sounds = entry.sounds
+  const lastFile = state.last_played[category]
+
+  let candidates = sounds
+  if (sounds.length > 1 && lastFile) {
+    candidates = sounds.filter((s) => s.file !== lastFile)
+    if (candidates.length === 0) candidates = sounds
+  }
+
+  const pick = candidates[Math.floor(Math.random() * candidates.length)]
+  state.last_played[category] = pick.file
+  return pick
+}
+
+function resolveActivePack(
+  config: PeonConfig,
+  state: PeonState,
+  sessionId: string,
+  packsDir: string,
+): string {
+  const available = listPacks(packsDir)
+
+  if (config.pack_rotation.length > 0) {
+    const validRotation = config.pack_rotation.filter((p) =>
+      available.includes(p),
+    )
+    if (validRotation.length > 0) {
+      const existing = state.session_packs[sessionId]
+      if (existing && validRotation.includes(existing)) {
+        return existing
+      }
+      const pick =
+        validRotation[Math.floor(Math.random() * validRotation.length)]
+      state.session_packs[sessionId] = pick
+      return pick
+    }
+  }
+
+  if (available.includes(config.active_pack)) {
+    return config.active_pack
+  }
+
+  return available[0] || config.active_pack
+}
+
+function escapeAppleScript(s: string): string {
+  return s.replace(/\\/g, "\\\\").replace(/"/g, '\\"')
+}
+
+function createDebounceChecker(
+  debounceMs: number,
+  overrides: Partial<Record<CESPCategory, number>> = {},
+) {
+  const lastEventTime: Partial<Record<CESPCategory, number>> = {}
+
+  return function shouldDebounce(category: CESPCategory, now?: number): boolean {
+    const time = now ?? Date.now()
+    const last = lastEventTime[category]
+    const threshold = overrides[category] ?? debounceMs
+    if (last && time - last < threshold) return true
+    lastEventTime[category] = time
+    return false
+  }
+}
+
+function createSpamChecker(threshold: number, windowSeconds: number) {
+  const promptTimestamps: number[] = []
+
+  return function checkSpam(nowSeconds?: number): boolean {
+    const now = nowSeconds ?? Date.now() / 1000
+    const cutoff = now - windowSeconds
+
+    while (promptTimestamps.length > 0 && promptTimestamps[0] < cutoff) {
+      promptTimestamps.shift()
+    }
+    promptTimestamps.push(now)
+
+    return promptTimestamps.length >= threshold
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Platform: Audio Playback
+// ---------------------------------------------------------------------------
+
+function playSound(
+  filePath: string,
+  volume: number,
+  runtimePlatform: RuntimePlatform = "mac",
+  relay: RelayConfig | null = null,
+  packsDir: string = "",
+): void {
+  if (!fs.existsSync(filePath)) return
+
+  // SSH / devcontainer: relay to local machine
+  if ((runtimePlatform === "ssh" || runtimePlatform === "devcontainer") && relay) {
+    const packsParent = path.dirname(packsDir)
+    const relPath = path.relative(packsParent, filePath)
+    const encoded = encodeURIComponent(relPath)
+    fetch(`http://${relay.host}:${relay.port}/play?file=${encoded}`, {
+      headers: { "X-Volume": String(volume) },
+    }).catch(() => {})
+    return
+  }
+
+  const platform = os.platform()
+
+  if (platform === "darwin") {
+    const cfg = loadConfig()
+    const useSfx = cfg.use_sound_effects_device !== false
+    const peonPlay = path.join(os.homedir(), ".claude", "hooks", "peon-ping", "scripts", "peon-play")
+    const cmd = (useSfx && fs.existsSync(peonPlay)) ? peonPlay : "afplay"
+    const proc = Bun.spawn([cmd, "-v", String(volume), filePath], {
+      stdout: "ignore",
+      stderr: "ignore",
+    })
+    proc.unref()
+  } else if (platform === "linux") {
+    let isWSL = false
+    try {
+      const ver = fs.readFileSync("/proc/version", "utf8")
+      isWSL = /microsoft/i.test(ver)
+    } catch {}
+
+    if (isWSL) {
+      const wpath = filePath.replace(/\//g, "\\")
+      const cmd = `
+        Add-Type -AssemblyName PresentationCore
+        $p = New-Object System.Windows.Media.MediaPlayer
+        $p.Open([Uri]::new('file:///${wpath}'))
+        $p.Volume = ${volume}
+        Start-Sleep -Milliseconds 200
+        $p.Play()
+        Start-Sleep -Seconds 3
+        $p.Close()
+      `
+      const proc = Bun.spawn(
+        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", cmd],
+        { stdout: "ignore", stderr: "ignore" },
+      )
+      proc.unref()
+    } else {
+      // Mirror peon.sh priority chain with per-backend volume scaling
+      const paVol = Math.round(Math.max(0, Math.min(65536, volume * 65536)))
+      const backends: string[][] = [
+        ["pw-play", "--volume", String(volume), filePath],
+        ["paplay", `--volume=${paVol}`, filePath],
+        ["aplay", "-q", filePath],
+      ]
+      for (const args of backends) {
+        try {
+          const which = Bun.spawnSync(["which", args[0]], { stdout: "pipe", stderr: "ignore" })
+          if (which.exitCode !== 0) continue
+          const proc = Bun.spawn(args, { stdout: "ignore", stderr: "ignore" })
+          proc.unref()
+          break
+        } catch {}
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Platform: Desktop Notifications
+// ---------------------------------------------------------------------------
+
+/** Notification options for rich desktop notifications */
+interface NotifyOptions {
+  title: string
+  subtitle?: string
+  body: string
+  /** Group ID for notification coalescing (terminal-notifier only) */
+  group?: string
+  /** Path to custom icon image (terminal-notifier only) */
+  iconPath?: string
+}
+
+/**
+ * Detect whether terminal-notifier is available.
+ * Cached at plugin init for performance.
+ *
+ * NOTE: terminal-notifier (github.com/julienXX/terminal-notifier) is unmaintained
+ * (last commit 2021) and uses the deprecated NSUserNotification API. Consider
+ * migrating to jamf/Notifier (github.com/jamf/Notifier) which uses the modern
+ * UserNotifications framework and has built-in --rebrand support for custom icons.
+ * Migrate when jamf/Notifier is published to Homebrew or when terminal-notifier
+ * breaks on a future macOS release.
+ */
+function detectTerminalNotifier(): string | null {
+  try {
+    const result = Bun.spawnSync(["which", "terminal-notifier"], {
+      stdout: "pipe",
+      stderr: "ignore",
+    })
+    const p = new TextDecoder().decode(result.stdout).trim()
+    if (p && result.exitCode === 0) return p
+  } catch {}
+  return null
 }
 
 /**
@@ -346,279 +546,346 @@ function resolveIconPath(): string | null {
   const candidates = [
     // Homebrew-installed icon (via formula)
     "/opt/homebrew/opt/peon-ping/libexec/docs/peon-icon.png",
-    // Linuxbrew / generic Homebrew on Linux
-    "/home/linuxbrew/.linuxbrew/opt/peon-ping/libexec/docs/peon-icon.png",
-    // Developer-local fallback if plugin ships one later
-    path.join(os.homedir(), ".config", "opencode", "peon-ping", "peon-icon.png"),
+    "/usr/local/opt/peon-ping/libexec/docs/peon-icon.png",
+    // Plugin dir
+    path.join(PLUGIN_DIR, "peon-icon.png"),
   ]
-  for (const candidate of candidates) {
-    if (fs.existsSync(candidate)) return candidate
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p
   }
   return null
 }
 
-// ---------------------------------------------------------------------------
-// Helpers: Focus Detection / Notifications
-// ---------------------------------------------------------------------------
-
-function isTerminalFocusedMac(): boolean {
-  try {
-    const { execSync } = require("node:child_process") as typeof import("node:child_process")
-    const script = `
-      tell application "System Events"
-        set frontApp to name of first application process whose frontmost is true
-        return frontApp
-      end tell
-    `
-    const frontApp = execSync(`osascript -e '${script.replace(/\n/g, " ")}'`, { encoding: "utf8" }).trim()
-    return TERMINAL_APPS.includes(frontApp)
-  } catch {
-    return true
+function sendNotification(
+  opts: NotifyOptions,
+  terminalNotifierPath: string | null,
+  runtimePlatform: RuntimePlatform = "mac",
+  relay: RelayConfig | null = null,
+): void {
+  // SSH / devcontainer: relay notification to local machine
+  if ((runtimePlatform === "ssh" || runtimePlatform === "devcontainer") && relay) {
+    fetch(`http://${relay.host}:${relay.port}/notify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title: opts.title, message: opts.body }),
+    }).catch(() => {})
+    return
   }
-}
 
-function shouldShowDesktopNotification(config: PeonConfig, platform: RuntimePlatform): boolean {
-  if (!config.desktop_notifications) return false
-  if (platform !== "mac") return true
-  return !isTerminalFocusedMac()
-}
+  const platform = os.platform()
 
-// ---------------------------------------------------------------------------
-// Helpers: Playback & Notifications
-// ---------------------------------------------------------------------------
-
-function buildMacVolume(volume: number): string {
-  // afplay volume range: 0.0 - 1.0
-  return String(Math.max(0, Math.min(1, volume)))
-}
-
-function playLocalMac(file: string, config: PeonConfig): void {
-  try {
-    const { spawn } = require("node:child_process") as typeof import("node:child_process")
-    const args = ["-v", buildMacVolume(config.volume), file]
-    spawn("afplay", args, {
-      detached: true,
-      stdio: "ignore",
-    }).unref()
-  } catch {
-    // Non-fatal
-  }
-}
-
-function playLocalLinux(file: string, config: PeonConfig): void {
-  try {
-    const { spawn } = require("node:child_process") as typeof import("node:child_process")
-
-    // Prefer pw-play if available; fallback to paplay/aplay.
-    const volumeLinear = Math.max(0, Math.min(1, config.volume))
-    const commands: Array<{ cmd: string; args: string[] }> = [
-      { cmd: "pw-play", args: ["--volume", String(volumeLinear), file] },
-      { cmd: "paplay", args: ["--volume", String(Math.round(volumeLinear * 65536)), file] },
-      { cmd: "aplay", args: [file] },
-    ]
-
-    for (const { cmd, args } of commands) {
+  if (platform === "darwin") {
+    // Prefer terminal-notifier for rich notifications (custom icon, grouping)
+    // NOTE: Replace with jamf/Notifier when available via Homebrew — see detectTerminalNotifier()
+    if (terminalNotifierPath) {
       try {
-        const child = spawn(cmd, args, {
-          detached: true,
-          stdio: "ignore",
-        })
-        child.unref()
+        const args = [
+          terminalNotifierPath,
+          "-title", opts.title,
+          "-message", opts.body,
+          "-group", opts.group || "peon-ping",
+        ]
+        if (opts.subtitle) {
+          args.push("-subtitle", opts.subtitle)
+        }
+        if (opts.iconPath) {
+          args.push("-appIcon", opts.iconPath)
+        }
+        const proc = Bun.spawn(args, { stdout: "ignore", stderr: "ignore" })
+        proc.unref()
         return
       } catch {
-        // Try next player
+        // Fall through to osascript
       }
     }
-  } catch {
-    // Non-fatal
+
+    // Fallback: osascript with subtitle support
+    try {
+      const title = escapeAppleScript(opts.title)
+      const body = escapeAppleScript(opts.body)
+      let script = `display notification "${body}" with title "${title}"`
+      if (opts.subtitle) {
+        script += ` subtitle "${escapeAppleScript(opts.subtitle)}"`
+      }
+      const proc = Bun.spawn(
+        ["osascript", "-e", script],
+        { stdout: "ignore", stderr: "ignore" },
+      )
+      proc.unref()
+    } catch {}
+  } else if (platform === "linux") {
+    try {
+      const args = ["notify-send", opts.title]
+      // Combine subtitle and body for Linux
+      const fullBody = opts.subtitle ? `${opts.subtitle}\n${opts.body}` : opts.body
+      args.push(fullBody)
+      if (opts.iconPath) {
+        args.push("-i", opts.iconPath)
+      }
+      const proc = Bun.spawn(args, {
+        stdout: "ignore",
+        stderr: "ignore",
+      })
+      proc.unref()
+    } catch {}
   }
 }
 
-function playViaRelay(file: string, config: PeonConfig, relay: RelayConfig): void {
+// ---------------------------------------------------------------------------
+// Platform: Terminal Focus Detection
+// ---------------------------------------------------------------------------
+
+async function isTerminalFocused(): Promise<boolean> {
+  if (os.platform() !== "darwin") return false
+
   try {
-    const { spawn } = require("node:child_process") as typeof import("node:child_process")
-    const args = [
-      "relay-client",
-      relay.host,
-      String(relay.port),
-      file,
-      String(config.volume),
-    ]
-    spawn("peon-ping", args, {
-      detached: true,
-      stdio: "ignore",
-    }).unref()
+    const proc = Bun.spawn(
+      [
+        "osascript",
+        "-e",
+        'tell application "System Events" to get name of first process whose frontmost is true',
+      ],
+      { stdout: "pipe", stderr: "ignore" },
+    )
+    const output = await new Response(proc.stdout).text()
+    const frontmost = output.trim()
+    return TERMINAL_APPS.some(
+      (name) => name.toLowerCase() === frontmost.toLowerCase(),
+    )
   } catch {
-    // Non-fatal
-  }
-}
-
-function notifyDesktop(title: string, body: string, iconPath: string | undefined, platform: RuntimePlatform): void {
-  try {
-    const { spawn } = require("node:child_process") as typeof import("node:child_process")
-
-    if (platform === "mac") {
-      const script = `display notification ${JSON.stringify(body)} with title ${JSON.stringify(title)}`
-      spawn("osascript", ["-e", script], { detached: true, stdio: "ignore" }).unref()
-      return
-    }
-
-    const args = [] as string[]
-    if (iconPath) args.push("-i", iconPath)
-    args.push(title, body)
-    spawn("notify-send", args, { detached: true, stdio: "ignore" }).unref()
-  } catch {
-    // Non-fatal
+    return false
   }
 }
 
 // ---------------------------------------------------------------------------
-// Helpers: Event Mapping
+// Tab Title
 // ---------------------------------------------------------------------------
 
-function normalizeCategory(raw: string): CESPCategory | null {
-  const normalized = raw.replace(/\s+/g, "").toLowerCase()
-
-  const aliases: Record<string, CESPCategory> = {
-    "session.start": "session.start",
-    sessionstart: "session.start",
-    "session.end": "session.end",
-    sessionend: "session.end",
-    "task.acknowledge": "task.acknowledge",
-    taskacknowledge: "task.acknowledge",
-    ack: "task.acknowledge",
-    "task.complete": "task.complete",
-    taskcomplete: "task.complete",
-    complete: "task.complete",
-    success: "task.complete",
-    "task.error": "task.error",
-    taskerror: "task.error",
-    error: "task.error",
-    "task.progress": "task.progress",
-    taskprogress: "task.progress",
-    progress: "task.progress",
-    "input.required": "input.required",
-    inputrequired: "input.required",
-    permission: "input.required",
-    attention: "input.required",
-    prompt: "input.required",
-    "resource.limit": "resource.limit",
-    resourcelimit: "resource.limit",
-    ratelimit: "resource.limit",
-    limit: "resource.limit",
-    "user.spam": "user.spam",
-    userspam: "user.spam",
-    spam: "user.spam",
-  }
-
-  return aliases[normalized] || null
-}
-
-function eventToCategory(event: any): CESPCategory | null {
-  if (!event) return null
-
-  // Plugin event wrapper
-  const type = event.type || event.name || event.event
-  if (!type) return null
-
-  const map: Record<string, CESPCategory> = {
-    "session.created": "session.start",
-    "session.deleted": "session.end",
-    "session.idle": "task.complete",
-    "session.error": "task.error",
-    "permission.asked": "input.required",
-    "tool.execute.after": "task.progress",
-  }
-
-  if (map[type]) return map[type]
-
-  // String-based fallback
-  return normalizeCategory(String(type))
+function setTabTitle(title: string): void {
+  process.stdout.write(`\x1b]0;${title}\x07`)
 }
 
 // ---------------------------------------------------------------------------
-// Plugin Implementation
+// OpenCode -> CESP v1.0 Event Mapping
+// ---------------------------------------------------------------------------
+//
+// Per CESP spec Section 6, each player publishes its event mapping.
+//
+// | OpenCode Event              | CESP Category    |
+// |-----------------------------|------------------|
+// | Plugin init / session start | session.start    |
+// | session.status (busy)       | task.acknowledge |
+// | session.idle                | task.complete    |
+// | session.error               | task.error       |
+// | permission.asked            | input.required   |
+// | (rate limit detection)      | resource.limit   |
+// | Rapid prompts detected      | user.spam        |
+//
+
+// ---------------------------------------------------------------------------
+// Plugin
 // ---------------------------------------------------------------------------
 
-export const PeonPing: Plugin = async ({ client }) => {
+export const PeonPingPlugin: Plugin = async ({ directory }) => {
+  const projectName = path.basename(directory || process.cwd()) || "opencode"
+
+  const config = loadConfig()
+  if (!config.enabled) return {}
+
+  const packsDir = getPacksDir(config)
+  const sessionId = `oc-${Date.now()}`
+
+  // Resolve active pack
+  const state = loadState()
+  const activePack = resolveActivePack(config, state, sessionId, packsDir)
+  saveState(state)
+
+  const packDir = path.join(packsDir, activePack)
+  const manifest = loadManifest(packDir)
+  if (!manifest) {
+    // No valid pack found -- plugin is a no-op
+    return {}
+  }
+
+  // --- Platform detection & relay config ---
   const runtimePlatform = detectPlatform()
-  const promptTimestamps: number[] = []
+  const relay = (runtimePlatform === "ssh" || runtimePlatform === "devcontainer")
+    ? getRelayConfig(config, runtimePlatform) : null
 
-  function isSpam(config: PeonConfig): boolean {
-    const threshold = config.spam_threshold || 3
-    const windowSecs = config.spam_window_seconds || 10
-    const now = Date.now()
-    const cutoff = now - windowSecs * 1000
+  // --- Notification capabilities (detected once at init) ---
+  const terminalNotifierPath = detectTerminalNotifier()
+  const iconPath = resolveIconPath()
 
-    while (promptTimestamps.length > 0 && promptTimestamps[0] < cutoff) {
-      promptTimestamps.shift()
-    }
-    promptTimestamps.push(now)
+  // --- In-memory state for debouncing and spam detection ---
+  const shouldDebounce = createDebounceChecker(config.debounce_ms, {
+    "task.complete": 5000,
+  })
+  const checkSpamRaw = createSpamChecker(config.spam_threshold, config.spam_window_seconds)
 
-    return promptTimestamps.length >= threshold
+  /** Wrapper that respects the user.spam category toggle. */
+  function checkSpam(): boolean {
+    if (config.categories["user.spam"] === false) return false
+    return checkSpamRaw()
   }
 
-  async function handleCategory(category: CESPCategory, sessionID?: string): Promise<void> {
-    const config = loadConfig()
-    if (!config.enabled || isPaused()) return
-    if (!config.categories?.[category]) return
+  /**
+   * Core handler: play a sound and optionally send a notification.
+   */
+  async function emitCESP(
+    category: CESPCategory,
+    opts: {
+      status?: string
+      marker?: string
+      notify?: boolean
+      notifyTitle?: string
+    } = {},
+  ): Promise<void> {
+    const {
+      status = "",
+      marker = "",
+      notify = false,
+      notifyTitle = "",
+    } = opts
+    const paused = isPaused()
 
-    const state = loadState()
-    const packName = resolveActivePack(config, state, sessionID)
-    if (!packName) return
-
-    const packDir = path.join(getPacksDir(config), packName)
-    const manifest = loadManifest(packDir)
-    if (!manifest) return
-
-    const soundFile = getSoundForCategory(manifest, packDir, category)
-    if (!soundFile) return
-
-    const relay = getRelayConfig(config, runtimePlatform)
-    const iconPath = resolveIconPath()
-
-    // Debounce repeated category triggers.
-    const lastPlayed = state.last_played[category]
-    const now = Date.now()
-    if (lastPlayed && now - Number(lastPlayed) < (config.debounce_ms || 500)) return
-    state.last_played[category] = String(now)
-    saveState(state)
-
-    if (runtimePlatform === "ssh" || runtimePlatform === "devcontainer" || runtimePlatform === "wsl") {
-      playViaRelay(soundFile, config, relay)
-    } else if (runtimePlatform === "mac") {
-      playLocalMac(soundFile, config)
-    } else {
-      playLocalLinux(soundFile, config)
+    // Tab title (always, even when paused)
+    if (status) {
+      setTabTitle(`${marker}${projectName}: ${status}`)
     }
 
-    if (shouldShowDesktopNotification(config, runtimePlatform)) {
-      const title = manifest.display_name || manifest.name
-      const body = category.replace(".", " ")
-      notifyDesktop(title, body, iconPath || undefined, runtimePlatform)
+    // Debounce check
+    if (shouldDebounce(category)) return
+
+    // Pick sound (needed for both playback and notification body)
+    let pickedSound: CESPSound | null = null
+    if (config.categories[category] !== false && !paused) {
+      const currentState = loadState()
+      pickedSound = pickSound(manifest!, category, currentState)
+      if (pickedSound) {
+        const soundPath = path.join(packDir, pickedSound.file)
+        playSound(soundPath, config.volume, runtimePlatform, relay, packsDir)
+        saveState(currentState)
+      }
+    }
+
+    // Desktop notification (only when enabled and terminal is NOT focused)
+    if (notify && !paused && config.desktop_notifications !== false) {
+      const focused = await isTerminalFocused()
+      if (!focused) {
+        const title = notifyTitle || `${marker}${projectName}: ${status}`
+        const body = pickedSound?.label
+          ? `\uD83D\uDDE3 "${pickedSound.label}"`
+          : `${marker}${projectName}`
+        sendNotification(
+          {
+            title,
+            subtitle: manifest!.display_name,
+            body,
+            group: `peon-ping-${projectName}`,
+          },
+          terminalNotifierPath,
+          runtimePlatform,
+          relay,
+        )
+      }
     }
   }
 
+  // --- Relay health check on init (SSH/devcontainer only) ---
+  if (relay) {
+    fetch(`http://${relay.host}:${relay.port}/health`)
+      .then((res) => {
+        if (!res.ok) {
+          console.warn(`[peon-ping] relay health check failed (HTTP ${res.status})`)
+        }
+      })
+      .catch(() => {
+        console.warn(`[peon-ping] relay unreachable at ${relay.host}:${relay.port} — sounds will not play`)
+      })
+  }
+
+  // --- Emit session.start on plugin init ---
+  setTimeout(
+    () =>
+      emitCESP("session.start", {
+        status: "ready",
+      }),
+    100,
+  )
+
+  // --- Return OpenCode event hooks ---
   return {
-    event: async ({ event }: any) => {
-      try {
-        const config = loadConfig()
+    event: async ({ event }) => {
+      switch (event.type) {
+        // Task complete
+        case "session.idle": {
+          await emitCESP("task.complete", {
+            status: "done",
+            marker: "\u25cf ",
+            notify: true,
+            notifyTitle: `${projectName} \u2014 Task complete`,
+          })
+          break
+        }
 
-        // Track rapid user prompts as spam.
-        if (event?.type === "tui.prompt.append") {
-          if (isSpam(config)) {
-            await handleCategory("user.spam")
-            return
+        // Task error
+        case "session.error": {
+          await emitCESP("task.error", {
+            status: "error",
+            marker: "\u25cf ",
+            notify: true,
+            notifyTitle: `${projectName} \u2014 Error occurred`,
+          })
+          break
+        }
+
+        // Input required (permission prompt)
+        case "permission.asked": {
+          await emitCESP("input.required", {
+            status: "needs approval",
+            marker: "\u25cf ",
+            notify: true,
+            notifyTitle: `${projectName} \u2014 Permission needed`,
+          })
+          break
+        }
+
+        // Session created
+        case "session.created": {
+          await emitCESP("session.start", {
+            status: "ready",
+          })
+          break
+        }
+
+        // Status change (working / busy)
+        case "session.status": {
+          const status = event.properties?.status
+          if (status === "busy" || status === "running") {
+            // Check for spam first
+            if (checkSpam()) {
+              await emitCESP("user.spam", {
+                status: "working",
+              })
+            } else {
+              // task.acknowledge: tool accepted work
+              await emitCESP("task.acknowledge", {
+                status: "working",
+              })
+            }
           }
+          break
         }
+      }
+    },
 
-        const category = eventToCategory(event)
-        if (category) {
-          await handleCategory(category, event?.properties?.sessionID || event?.properties?.sessionId)
-        }
-      } catch {
-        // Never let plugin failures interrupt OpenCode.
+    // Track user messages for spam detection
+    "message.updated": async (props: any) => {
+      if (props?.properties?.role === "user") {
+        checkSpam()
       }
     },
   }
 }
+
+export default PeonPingPlugin

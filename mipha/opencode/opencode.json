@@ -17,7 +17,7 @@
     "groundcover": {
       "type": "remote",
       "url": "https://mcp.groundcover.com/api/mcp",
-      "enabled": false,
+      "enabled": true,
       "oauth": false,
       "headers": {
         "X-Timezone": "{env:GROUNDCOVER_TIMEZONE}",

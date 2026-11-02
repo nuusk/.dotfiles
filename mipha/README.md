@@ -1,7 +1,7 @@
 # Mipha workstation snapshot
 
 Copy the application directories (bash, dunst, green-static, hypr, kitty,
-nushell, nvim, waybar, and wofi) into `~/.config/`. Copy `starship.toml`
+nvim, waybar, and wofi) into `~/.config/`. Copy `starship.toml`
 there too. Merge `.config/` into `~/.config/` and `.local/` into `~/.local/`.
 See `bash/README.md` for the shell symlinks.
 
@@ -23,3 +23,8 @@ appearance; the switcher updates them when toggled.
 The OpenCode directory remains a separately sanitized snapshot; see
 `opencode/README.md` for credentials and authentication setup. Live account
 configuration, caches, histories, and backup files are not part of this sync.
+
+`.claude/` holds the Claude Code Pikmin notification hook. Merge
+`settings.hooks.json` into `~/.claude/settings.json`, and copy `hooks/` to
+`~/.claude/hooks/`. The sound pack is not tracked: install the `pikmin` OpenPeon
+pack to `~/.claude/hooks/pikmin/packs/pikmin`.

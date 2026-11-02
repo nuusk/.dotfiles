@@ -31,11 +31,18 @@ local themes = {
             colors = { "rgba(006b46dd)", "rgba(006477cc)" },
             angle = 45,
         },
-        inactive_border = "rgba(7f968cdd)",
-        shadow = "rgba(14251f24)",
-        active_opacity = 1.0,
-        inactive_opacity = 1.0,
+        inactive_border = "rgba(a88d68dd)",
+        shadow = "rgba(3f302424)",
+        active_opacity = 0.94,
+        inactive_opacity = 0.88,
     },
 }
 
+local accent_file = loadfile(config_home .. "/hypr/accent.lua")
+if accent_file then
+    local ok, colors = pcall(accent_file)
+    if ok and type(colors) == "table" then
+        themes[mode].active_border.colors = colors
+    end
+end
 return themes[mode]

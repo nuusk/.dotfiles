@@ -1,0 +1,44 @@
+
+* {
+    font-family: "BlexMono Nerd Font Mono", "JetBrains Mono", monospace;
+    font-size: 13px;
+    border-radius: 0;
+}
+
+#window {
+    background-color: @window-bg;
+    color: @fg;
+    border: 1px solid @primary;
+}
+
+#outer-box { padding: 8px; }
+
+#input {
+    background-color: @input-bg;
+    color: @fg;
+    border: none;
+    border-bottom: 1px solid @primary;
+    padding: 10px 8px;
+    margin-bottom: 8px;
+    box-shadow: none;
+    caret-color: @primary;
+}
+
+#scroll, #inner-box { background-color: transparent; }
+
+#entry {
+    padding: 5px 8px;
+    margin: 1px 0;
+    border-left: 3px solid transparent;
+    color: @fg;
+}
+
+#entry:selected {
+    background-color: @primary;
+    border-left-color: @window-border-alt;
+    color: @window-bg;
+}
+
+#text { color: @fg; }
+#text:selected { color: @window-bg; font-weight: bold; }
+#img { margin-right: 8px; }

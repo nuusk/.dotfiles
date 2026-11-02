@@ -78,7 +78,7 @@ Example:
 
 ```json
 {
-  "packs_dir": "/home/<you>/.claude/hooks/peon-ping/packs"
+  "packs_dir": "/home/<you>/.claude/hooks/pikmin/packs"
 }
 ```
 

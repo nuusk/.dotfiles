@@ -12,7 +12,8 @@ Personal config repo. **It is public:** anything committed is published.
 
 | Repo path | Live path |
 |---|---|
-| `<host>/.config/X`, `<host>/.local/X` | `~/.config/X`, `~/.local/X` |
+| `<host>/.config/X`, `<host>/.local/X`, `<host>/.claude/X` | `~/.config/X`, `~/.local/X`, `~/.claude/X` |
+| `<host>/.claude/settings.hooks.json` | sanitized `hooks` subset of `~/.claude/settings.json`; never commit the rest |
 | `<host>/X` (everything else) | `~/.config/X` |
 | `<host>/README.md` | not installed |
 
@@ -40,7 +41,7 @@ Drift check, run from the repo root with `h=<host>`:
 
 ```bash
 git ls-files "$h" | while read -r f; do r=${f#"$h"/}
-  case "$r" in README.md) continue;; .config/*|.local/*) t=~/$r;; *) t=~/.config/$r;; esac
+  case "$r" in README.md|.claude/settings.hooks.json) continue;; .config/*|.local/*|.claude/*) t=~/$r;; *) t=~/.config/$r;; esac
   [ -e "$t" ] || { echo "MISSING $r"; continue; }
   cmp -s "$f" "$t" || echo "DIFF $r"
 done

@@ -1,10 +1,7 @@
 {
-  "active_pack": "sc_kerrigan",
-  "default_pack": "sc_kerrigan",
+  "active_pack": "pikmin",
   "volume": 0.5,
   "enabled": true,
-  "desktop_notifications": true,
-  "use_sound_effects_device": true,
   "categories": {
     "session.start": true,
     "session.end": true,
@@ -19,5 +16,7 @@
   "spam_threshold": 3,
   "spam_window_seconds": 10,
   "pack_rotation": [],
-  "debounce_ms": 500
+  "debounce_ms": 500,
+  "default_pack": "pikmin",
+  "desktop_notifications": true
 }
