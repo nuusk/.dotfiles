@@ -27,4 +27,6 @@ configuration, caches, histories, and backup files are not part of this sync.
 `.claude/` holds the Claude Code Pikmin notification hook. Merge
 `settings.hooks.json` into `~/.claude/settings.json`, and copy `hooks/` to
 `~/.claude/hooks/`. The sound pack is not tracked: install the `pikmin` OpenPeon
-pack to `~/.claude/hooks/pikmin/packs/pikmin`.
+pack to `~/.claude/hooks/pikmin/packs/pikmin`. The Waybar `custom/claude-sounds` module
+(`waybar/claude_sounds.sh`) mutes and unmutes those sounds by toggling the
+`~/.claude/hooks/pikmin/muted` flag file, which is runtime state and not tracked.

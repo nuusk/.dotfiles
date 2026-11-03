@@ -9,7 +9,7 @@
 
     "modules-left": ["custom/logo", "hyprland/workspaces", "custom/special-workspace", "hyprland/window"],
     "modules-center": [],
-    "modules-right": ["battery", "cpu", "memory", "network", "wireplumber", "bluetooth", "hyprland/language", "idle_inhibitor", "custom/theme", "custom/dunst", "custom/mic-mute", "custom/recording", "clock", "tray"],
+    "modules-right": ["battery", "cpu", "memory", "network", "wireplumber", "bluetooth", "hyprland/language", "idle_inhibitor", "custom/theme", "custom/dunst", "custom/claude-sounds", "custom/mic-mute", "custom/recording", "clock", "tray"],
 
     "custom/logo": {
         "format": "[MIPHA]",
@@ -44,6 +44,15 @@
         "return-type": "json",
         "interval": 5,
         "on-click": "dunst_toggle toggle",
+        "exec-on-event": true
+    },
+
+    "custom/claude-sounds": {
+        "format": "{}",
+        "exec": "~/.config/waybar/claude_sounds.sh",
+        "return-type": "json",
+        "interval": 5,
+        "on-click": "~/.config/waybar/claude_sounds.sh toggle",
         "exec-on-event": true
     },
 

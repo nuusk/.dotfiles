@@ -6,15 +6,17 @@ tasks_dir="${TASKS_DIR:-$HOME/tasks}"
 launcher="$HOME/.config/hypr/glitch-launch.sh"
 [ -x "$launcher" ] || launcher=env
 self="$(readlink -f "$0")"
-declare -A file area title status repo branch deps session live_status live_pid
+declare -A file title status repo branch deps session live_status live_pid
 ids=()
 
 usage() {
   cat <<USAGE
 usage: t                  open the picker
        t ls [--all]       print the task tree
-       t new [--area work|private] [--repo R] [--branch B] [--depends a,b] [--jira KEY] [title]
+       t new [--repo R] [--branch B] [--depends a,b] [--jira KEY] [title]
        t open [--fresh] ID
+       t resume [--query Q] [REPO]
+                          pick a PR or branch of REPO and work on it in a task session
        t shell ID         open a terminal in the task's directory
        t edit ID
        t done ID          toggle done
@@ -35,21 +37,18 @@ set_field() {
 }
 
 load() {
-  local f id a
+  local f id
   shopt -s nullglob
-  for a in work private; do
-    for f in "$tasks_dir/$a"/*.md; do
-      id="$(basename "$f" .md)"
-      ids+=("$id")
-      file[$id]="$f"
-      area[$id]="$a"
-      title[$id]="$(field "$f" title)"
-      status[$id]="$(field "$f" status)"
-      repo[$id]="$(field "$f" repo)"
-      branch[$id]="$(field "$f" branch)"
-      session[$id]="$(field "$f" session)"
-      deps[$id]="$(field "$f" depends | tr -d '[]' | tr ',' ' ')"
-    done
+  for f in "$tasks_dir"/*.md; do
+    id="$(basename "$f" .md)"
+    ids+=("$id")
+    file[$id]="$f"
+    title[$id]="$(field "$f" title)"
+    status[$id]="$(field "$f" status)"
+    repo[$id]="$(field "$f" repo)"
+    branch[$id]="$(field "$f" branch)"
+    session[$id]="$(field "$f" session)"
+    deps[$id]="$(field "$f" depends | tr -d '[]' | tr ',' ' ')"
   done
   shopt -u nullglob
   load_live
@@ -122,36 +121,28 @@ walk() {
 }
 
 rows() {
-  local show_all="${1:-}" a id d parent any
+  local show_all="${1:-}" id d
   declare -A kids seen visible has_parent
   for id in "${ids[@]}"; do
     [ "$show_all" = --all ] || [ "${status[$id]}" != done ] && visible[$id]=1
   done
-  # A task sits under its first visible dependency in the same area.
+  # A task sits under its first visible dependency.
   for id in "${ids[@]}"; do
     [ -n "${visible[$id]:-}" ] || continue
     for d in ${deps[$id]}; do
-      if [ -n "${visible[$d]:-}" ] && [ "${area[$d]}" = "${area[$id]}" ]; then
+      if [ -n "${visible[$d]:-}" ]; then
         kids[$d]+="$id "
         has_parent[$id]=1
         break
       fi
     done
   done
-  for a in work private; do
-    any=""
-    for id in "${ids[@]}"; do
-      [ -n "${visible[$id]:-}" ] && [ "${area[$id]}" = "$a" ] && any=1
-    done
-    [ -n "$any" ] || continue
-    printf -- '-\t\033[1m%s\033[0m\n' "${a^^}"
-    for id in "${ids[@]}"; do
-      [ -n "${visible[$id]:-}" ] && [ "${area[$id]}" = "$a" ] && [ -z "${has_parent[$id]:-}" ] && walk "$id" "" ""
-    done
-    # Dependency cycles have no root, so show them instead of hiding them.
-    for id in "${ids[@]}"; do
-      [ -n "${visible[$id]:-}" ] && [ "${area[$id]}" = "$a" ] && [ -z "${seen[$id]:-}" ] && walk "$id" "" ""
-    done
+  for id in "${ids[@]}"; do
+    [ -n "${visible[$id]:-}" ] && [ -z "${has_parent[$id]:-}" ] && walk "$id" "" ""
+  done
+  # Dependency cycles have no root, so show them instead of hiding them.
+  for id in "${ids[@]}"; do
+    [ -n "${visible[$id]:-}" ] && [ -z "${seen[$id]:-}" ] && walk "$id" "" ""
   done
   return 0
 }
@@ -207,7 +198,7 @@ task_dir() {
   if [ -n "${repo[$1]}" ]; then
     worktree_for "$1"
   else
-    echo "$tasks_dir/${area[$1]}"
+    echo "$tasks_dir"
   fi
 }
 
@@ -258,10 +249,9 @@ slugify() {
 }
 
 cmd_new() {
-  local a="" r="" b="" d="" j="" t_="" id f dep
+  local r="" b="" d="" j="" t_="" id f dep
   while [ $# -gt 0 ]; do
     case "$1" in
-      --area) a="$2"; shift 2 ;;
       --repo) r="$2"; shift 2 ;;
       --branch) b="$2"; shift 2 ;;
       --depends) d="$2"; shift 2 ;;
@@ -272,19 +262,17 @@ cmd_new() {
   if [ -z "$t_" ]; then
     read -rp "title: " t_
     [ -n "$t_" ] || return 1
-    [ -n "$a" ] || a="$(printf 'work\nprivate\n' | fzf --height=6 --prompt='area> ')" || return 1
     [ -n "$r" ] || r="$(find "$HOME/code" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | fzf --height=15 --prompt='repo (esc for none)> ')"
     [ -z "$r" ] || read -rei "$(slugify "$t_")" -p "branch: " b
   fi
-  [ "$a" = work ] || [ "$a" = private ] || { echo "t: --area must be work or private" >&2; return 2; }
   id="$(slugify "$t_")"
   [ -n "$id" ] || { echo "t: title has no usable characters" >&2; return 2; }
-  [ ! -e "$tasks_dir/work/$id.md" ] && [ ! -e "$tasks_dir/private/$id.md" ] || { echo "t: task exists: $id" >&2; return 1; }
+  [ ! -e "$tasks_dir/$id.md" ] || { echo "t: task exists: $id" >&2; return 1; }
   for dep in ${d//,/ }; do
-    [ -e "$tasks_dir/work/$dep.md" ] || [ -e "$tasks_dir/private/$dep.md" ] || { echo "t: no such dependency: $dep" >&2; return 1; }
+    [ -e "$tasks_dir/$dep.md" ] || { echo "t: no such dependency: $dep" >&2; return 1; }
   done
-  f="$tasks_dir/$a/$id.md"
-  mkdir -p "$tasks_dir/$a"
+  f="$tasks_dir/$id.md"
+  mkdir -p "$tasks_dir"
   cat >"$f" <<TASK
 ---
 title: $t_
@@ -302,6 +290,99 @@ Goal, constraints and links
 ## Next step
 TASK
   echo "$id"
+}
+
+# Lists my PRs, PRs waiting for my review, other open PRs and recent branches as: kind, branch, PR number, PR url, title, label.
+resume_choices() {
+  local root="$1" r fetch_pid id kind n b cross url t_ who when ref color tag
+  declare -A in_pr has_task seen_branch seen_pr
+  r="$(basename "$root")"
+  for id in "${ids[@]}"; do
+    [ "${repo[$id]}" != "$r" ] || [ -z "${branch[$id]}" ] || has_task[${branch[$id]}]="$id"
+  done
+  git -C "$root" fetch -q --prune origin 2>/dev/null &
+  fetch_pid=$!
+  while IFS=$'\t' read -r kind n b cross url who t_; do
+    [ -z "${seen_pr[$n]:-}" ] || continue
+    seen_pr[$n]=1
+    # A PR from a fork has no branch on origin, so it gets a local branch named after the PR.
+    [ "$cross" = true ] && b="pr-$n"
+    in_pr[$b]=1
+    case "$kind" in
+      mine) color=32 tag=PR ;;
+      review) color=35 tag=review ;;
+      *) color=34 tag=PR ;;
+    esac
+    printf '%s\t%s\t%s\t%s\t%s\t\033[%sm%-6s\033[0m #%-6s %s \033[33m@%s\033[0m \033[90m%s%s\033[0m\n' "$kind" "$b" "$n" "$url" "$t_" \
+      "$color" "$tag" "$n" "$t_" "$who" "$b" "${has_task[$b]:+  task: ${has_task[$b]}}"
+  done < <(
+    cd "$root" && {
+      fields=number,headRefName,isCrossRepository,url,author,title
+      row='[$k, .number, .headRefName, .isCrossRepository, .url, .author.login, .title] | @tsv'
+      gh pr list --author @me --json "$fields" --limit 50 | jq -r --arg k mine ".[] | $row"
+      gh pr list --search "review-requested:@me" --json "$fields" --limit 50 | jq -r --arg k review ".[] | $row"
+      gh pr list --json "$fields" --limit 200 | jq -r --arg k other ".[] | $row"
+    } 2>/dev/null
+  )
+  wait "$fetch_pid"
+  while IFS=$'\t' read -r ref when who; do
+    b="${ref#origin/}"
+    case "$b" in HEAD | main | master | origin | gh-readonly-queue/*) continue ;; esac
+    [ -z "${in_pr[$b]:-}" ] && [ -z "${seen_branch[$b]:-}" ] || continue
+    seen_branch[$b]=1
+    printf 'branch\t%s\t-\t-\t%s\t\033[36mbranch\033[0m  %s \033[33m@%s\033[0m \033[90m%s%s\033[0m\n' "$b" "$b" "$b" "$who" "$when" \
+      "${has_task[$b]:+  task: ${has_task[$b]}}"
+  done < <(git -C "$root" for-each-ref --sort=-committerdate --count=300 \
+    --format=$'%(refname:short)\t%(committerdate:relative)\t%(authorname)' refs/heads refs/remotes/origin)
+}
+
+cmd_resume() {
+  local query="" r root picked kind b n url t_ label id="" note base i f
+  [ "${1:-}" != --query ] || { query="$2"; shift 2; }
+  r="${1:-}"
+  load
+  [ -n "$r" ] || r="$(find "$HOME/code" -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | fzf --height=15 --prompt='repo> ')" || return 1
+  root="$HOME/code/$r"
+  git -C "$root" rev-parse --git-dir >/dev/null 2>&1 || { echo "t: not a git repo: $root" >&2; return 1; }
+  printf 'fetching %s…\n' "$r" 2>/dev/null >/dev/tty
+  picked="$(resume_choices "$root" | fzf --ansi --no-sort --layout=reverse --delimiter=$'\t' --with-nth=6 --query="$query" \
+    --header="$r: pick a PR or branch to work on · type @name to filter by author · esc cancels"
+    # A pick made before the list finishes loading kills the lister with SIGPIPE, so only fzf's status counts.
+    exit "${PIPESTATUS[1]}")"
+  i=$?
+  [ "$i" -eq 130 ] && return 1
+  [ "$i" -eq 0 ] || { echo "t: the PR list closed without a pick (fzf exit $i)" >&2; return 1; }
+  IFS=$'\t' read -r kind b n url t_ label <<<"$picked"
+
+  if [ "$b" = "pr-$n" ]; then
+    git -C "$root" fetch -q origin "+pull/$n/head:refs/heads/$b" 2>/dev/null ||
+      git -C "$root" show-ref --verify --quiet "refs/heads/$b" ||
+      { echo "t: could not fetch PR #$n" >&2; return 1; }
+  fi
+
+  for i in "${ids[@]}"; do
+    [ "${repo[$i]}" = "$r" ] && [ "${branch[$i]}" = "$b" ] && { id="$i"; break; }
+  done
+  if [ -n "$id" ]; then
+    [ "${status[$id]}" != done ] || set_field "${file[$id]}" status open
+  else
+    case "$kind" in
+      mine) note="Continue work on PR #$n: $url" ;;
+      review) note="Review PR #$n: $url" ;;
+      other) note="Work on PR #$n: $url" ;;
+      *) note="Continue work on branch $b." ;;
+    esac
+    base="$t_"
+    for ((i = 2; ; i++)); do
+      id="$(slugify "$t_")"
+      [ -e "$tasks_dir/$id.md" ] || break
+      t_="$base $i"
+    done
+    id="$(cmd_new --repo "$r" --branch "$b" "$t_")" || return
+    f="$tasks_dir/$id.md"
+    awk -v n="$note" '$0=="Goal, constraints and links" && !d {print n; d=1; next} {print}' "$f" >"$f.tmp" && mv "$f.tmp" "$f"
+  fi
+  cmd_open_sub "$id"
 }
 
 cmd_edit() {
@@ -347,18 +428,27 @@ cmd_deps() {
 }
 
 picker() {
-  local out key id msg=""
-  local help=$'enter claude · ctrl-t terminal · ctrl-f fresh session · ctrl-n new\nctrl-e edit · ctrl-l waits for · ctrl-d done · ctrl-a show done'
+  local out rc query key id msg=""
+  local help=$'enter claude · ctrl-t terminal · ctrl-f fresh session · ctrl-n new\nctrl-r resume PR/branch · ctrl-e edit · ctrl-l waits for · ctrl-d done · ctrl-a show done'
   while :; do
-    out="$("$self" _rows | fzf --ansi --no-sort --layout=reverse --delimiter=$'\t' --with-nth=2.. \
-      --header="${msg:-$help}" --expect=ctrl-f,ctrl-t --preview="$self _show {1}" --preview-window=right,45% \
+    out="$("$self" _rows | fzf --ansi --no-sort --layout=reverse --delimiter=$'\t' --with-nth=2.. --print-query \
+      --header="${msg:-$help}" --expect=ctrl-f,ctrl-t,ctrl-r --preview="$self _show {1}" --preview-window=right,45% \
       --bind="ctrl-n:execute($self new)+reload($self _rows)" \
       --bind="ctrl-e:execute($self edit {1})+reload($self _rows)" \
       --bind="ctrl-l:execute($self deps {1})+reload($self _rows)" \
       --bind="ctrl-d:execute-silent($self done {1})+reload($self _rows)" \
-      --bind="ctrl-a:reload($self _rows --all)")" || return 0
-    key="$(sed -n 1p <<<"$out")"
-    id="$(sed -n 2p <<<"$out" | cut -f1)"
+      --bind="ctrl-a:reload($self _rows --all)"
+      exit "${PIPESTATUS[1]}")"
+    rc=$?
+    # fzf exits 1 when nothing matches the query, which shouldn't stop ctrl-r from searching PRs for it.
+    query="$(sed -n 1p <<<"$out")"
+    key="$(sed -n 2p <<<"$out")"
+    id="$(sed -n 3p <<<"$out" | cut -f1)"
+    if [ "$key" = ctrl-r ]; then
+      msg="$("$self" resume --query "$query" 2>&1)" && return 0
+      continue
+    fi
+    [ "$rc" -le 1 ] || return 0
     [ "$id" != - ] && [ -n "$id" ] || { msg=""; continue; }
     if [ "$key" = ctrl-t ]; then
       msg="$("$self" shell "$id" 2>&1)" && return 0
@@ -378,12 +468,13 @@ case "${1:-}" in
   ls) shift; load; rows "$@" | cut -f2- ;;
   new) shift; cmd_new "$@" ;;
   open) shift; cmd_open "$@" ;;
+  resume) shift; cmd_resume "$@" ;;
   shell) shift; cmd_shell "$@" ;;
   edit) shift; cmd_edit "$@" ;;
   done) shift; cmd_done "$@" ;;
   deps) shift; cmd_deps "$@" ;;
   _rows) shift; load; rows "$@" ;;
-  _show) [ "${2:-}" = - ] || cat "$tasks_dir"/*/"${2:-}.md" 2>/dev/null ;;
+  _show) [ "${2:-}" = - ] || cat "$tasks_dir/${2:-}.md" 2>/dev/null ;;
   -h|--help|help) usage ;;
   *) usage >&2; exit 2 ;;
 esac

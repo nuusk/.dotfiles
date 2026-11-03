@@ -32,6 +32,7 @@ window#waybar {
 #idle_inhibitor,
 #custom-theme,
 #custom-dunst,
+#custom-claude-sounds,
 #custom-mic-mute,
 #custom-recording,
 #clock,
@@ -182,4 +183,18 @@ window#waybar {
     color: @primary;
     font-weight: 700;
     padding: 0 10px;
+}
+
+#custom-claude-sounds {
+    background-image: url("claude.svg");
+    background-size: 14px 14px;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-width: 14px;
+    padding: 0 6px;
+}
+
+#custom-claude-sounds.muted {
+    background-image: url("claude-muted.svg");
+    opacity: 0.6;
 }
