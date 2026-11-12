@@ -155,6 +155,8 @@ worktree_for() {
     $1=="worktree" {p=substr($0,10)} $1=="branch" && $2==b {print p; exit}')"
   [ -z "$path" ] || { echo "$path"; return; }
   path="$HOME/worktrees/${repo[$id]}/$b"
+  # The task's worktree may have another branch checked out by now, for example the next PR of a stack.
+  git -C "$root" worktree list --porcelain | grep -qxF "worktree $path" && { echo "$path"; return; }
   mkdir -p "$(dirname "$path")"
   if git -C "$root" show-ref --verify --quiet "refs/heads/$b"; then
     git -C "$root" worktree add "$path" "$b" >&2
