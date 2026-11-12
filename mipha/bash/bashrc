@@ -413,6 +413,7 @@ wa() {
 # Journal: encrypted with gocryptfs, unlocked only while writing
 jopen() {
   mountpoint -q ~/journal || gocryptfs -idle 30m ~/.journal.enc ~/journal || return
+  command -v vault-art >/dev/null && vault-art journal >/dev/null
   xdg-open 'obsidian://open?vault=journal' >/dev/null 2>&1
 }
 
