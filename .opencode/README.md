@@ -13,7 +13,7 @@ This repository contains repo-level OpenCode automation under `.opencode/`.
 
 The repo includes a workflow at:
 
-- `.github/workflows/opencode-push-privacy-scan.yml`
+- `.github/workflows/push-privacy-scan.yml`
 
 It runs on every push and scans the pushed changes for:
 

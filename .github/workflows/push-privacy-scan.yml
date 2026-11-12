@@ -1,4 +1,4 @@
-name: opencode-push-privacy-scan
+name: push-privacy-scan
 
 on:
   push:
