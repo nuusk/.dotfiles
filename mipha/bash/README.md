@@ -32,6 +32,15 @@ wa --new      # start a fresh Claude session for the current worktree
 
 `wa` links worktrees to agents through Claude Code sessions under `~/.claude/projects/`, stored per directory, and resumes the newest one for that worktree.
 
+### Journal
+
+```bash
+jopen    # unlock ~/journal (gocryptfs, ~/.journal.enc) and open it in Obsidian; auto-locks after 30m idle
+jclose   # lock ~/journal; close the vault in Obsidian first
+```
+
+Needs `gocryptfs`, set up once with `gocryptfs -init ~/.journal.enc`.
+
 ### Other aliases
 
 ```bash

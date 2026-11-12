@@ -410,6 +410,16 @@ wa() {
   (cd "$root" && claude "$@")
 }
 
+# Journal: encrypted with gocryptfs, unlocked only while writing
+jopen() {
+  mountpoint -q ~/journal || gocryptfs -idle 30m ~/.journal.enc ~/journal || return
+  xdg-open 'obsidian://open?vault=journal' >/dev/null 2>&1
+}
+
+jclose() {
+  fusermount3 -u ~/journal && echo "Journal locked."
+}
+
 h() {
   cat <<'EOF'
 Custom shortcuts
@@ -425,6 +435,10 @@ Git worktrees
   wa            resume or start the Claude agent session for the current worktree
   wa --pick     choose a worktree, then resume/start its agent session
   wa --list     list worktrees and their latest Claude session
+
+Journal
+  jopen         unlock ~/journal and open it in Obsidian (auto-locks after 30m idle)
+  jclose        lock ~/journal; close the vault in Obsidian first
 
 Aliases
   k             kubectl
